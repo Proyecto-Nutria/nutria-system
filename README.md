@@ -2,19 +2,29 @@
 
 ## Pre requisites
 
-1. [NodeJs](https://nodejs.org/en/download/)
+1. [Nodejs](https://nodejs.org/en/download/)
 1. [Firebase CLI](https://firebase.google.com/docs/cli)
-1. [StandardJs](https://standardjs.com/#install) (Install it globally)
+1. [Standardjs](https://standardjs.com/#install) (Install it globally)
 
 ## Setup
 
-Change your current directory to `functions` folder and run:
+1. Change your current directory to `functions` folder and run:
 
-```node
-npm install
-```
+   ```node
+   npm install
+   ```
 
-You can test your functions locally using:
+1. Change the permissions of the `pre-commit` file:
+
+   ```
+   chmod +x pre-commit
+   ```
+
+1. Move the `pre-commit` file to the `.git/hooks` folder :
+
+## Development
+
+1. You can test your functions locally using:
 
 ```
 firebase serve
