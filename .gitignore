@@ -118,3 +118,6 @@ dist
 # vscode
 .vscode/
 .prettierignore
+
+# keys
+nutria-system-firebase-adminsdk*.json
