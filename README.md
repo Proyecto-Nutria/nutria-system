@@ -20,7 +20,7 @@
    chmod +x pre-commit
    ```
 
-1. Move the `pre-commit` file to the `.git/hooks` folder :
+1. Move the `pre-commit` file to the `.git/hooks` folder
 
 ## Development
 
