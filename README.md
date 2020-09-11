@@ -4,6 +4,7 @@
 
 1. [NodeJs](https://nodejs.org/en/download/)
 1. [Firebase CLI](https://firebase.google.com/docs/cli)
+1. [StandardJs](https://standardjs.com/#install) (Install it globally)
 
 ## Setup
 
