@@ -1,5 +1,24 @@
 # nutria-system
 
+## Pre requisites
+
+1. [NodeJs](https://nodejs.org/en/download/)
+1. [Firebase CLI](https://firebase.google.com/docs/cli)
+
+## Setup
+
+Change your current directory to `functions` folder and run:
+
+```node
+npm install
+```
+
+You can test your functions locally using:
+
+```
+firebase serve
+```
+
 ## Important Notes
 
 ### 1. Commit Messages
@@ -13,7 +32,6 @@ This commit will: <commit message>
 Examples:
 
 ```
-# Good
 This commit will: Test the NutriaUser endpoint using jest
 ```
 
