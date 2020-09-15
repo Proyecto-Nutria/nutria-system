@@ -3,8 +3,16 @@ const { SingletonAdmin } = require('../models')
 const personResolvers = {
   Query: {
     persons: (_parent, _args, context, _info) => {
+      SingletonAdmin.GetInstance().auth().verifyIdToken(context.authScope)
+        .then(function (decodedToken) {
+          const uid = decodedToken.uid
+          console.info(uid)
+        }).catch(function (error) {
+          console.info(error)
+        })
+
       console.info(context.authScope)
-      return new SingletonAdmin.GetInstance().database()
+      return SingletonAdmin.GetInstance().database()
         .ref('persons')
         .once('value')
         .then(snap => snap.val())
