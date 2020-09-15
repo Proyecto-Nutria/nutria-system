@@ -2,7 +2,8 @@ const { SingletonAdmin } = require('../models')
 
 const personResolvers = {
   Query: {
-    persons: () => {
+    persons: (_parent, _args, context, _info) => {
+      console.info(context.authScope)
       return new SingletonAdmin.GetInstance().database()
         .ref('persons')
         .once('value')
