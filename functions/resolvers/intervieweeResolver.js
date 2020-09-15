@@ -1,10 +1,10 @@
 const { SingletonAdmin } = require('../models')
 
-const personResolvers = {
+const intervieweeResolver = {
   Query: {
-    persons: () => {
+    interviewee: () => {
       return new SingletonAdmin.GetInstance().database()
-        .ref('persons')
+        .ref('interviewee')
         .once('value')
         .then(snap => snap.val())
         .then(val => Object.keys(val).map(key => val[key]))
@@ -13,5 +13,5 @@ const personResolvers = {
 }
 
 module.exports = {
-  personResolvers
+  intervieweeResolver
 }
