@@ -11,7 +11,6 @@ const personResolvers = {
           console.info(error)
         })
 
-      console.info(context.authScope)
       return SingletonAdmin.GetInstance().database()
         .ref('persons')
         .once('value')

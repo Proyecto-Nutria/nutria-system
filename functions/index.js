@@ -13,5 +13,12 @@ const server = new ApolloServer({
   })
 })
 
-server.applyMiddleware({ app, path: '/', cors: false })
+server.applyMiddleware({
+  app,
+  path: '/',
+  cors: {
+    credentials: true,
+    origin: true
+  }
+})
 exports.graphql = functions.https.onRequest(app)
