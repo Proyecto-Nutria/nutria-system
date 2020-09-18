@@ -2,7 +2,7 @@ const { gql } = require('apollo-server-express')
 
 const query = gql`
   type Query {
-    interviewee: [Interviewee]
+    persons: [Person]
   }
 `
 

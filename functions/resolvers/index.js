@@ -1,6 +1,6 @@
-const { intervieweeResolver } = require('./intervieweeResolver')
+const { personResolvers } = require('./personResolvers')
 
-const resolvers = [intervieweeResolver]
+const resolvers = [personResolvers]
 
 module.exports = {
   resolvers
