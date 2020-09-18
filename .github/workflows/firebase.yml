@@ -1,24 +1,16 @@
-name: Firebase deployment
+name: Firebase
 on:
   push:
     branches:
-      - master
-
+    - master
 jobs:
-  deploy:
+  main:
     name: Deploy
-    needs: build
     runs-on: ubuntu-latest
     steps:
-      - name: Checkout Repo
-        uses: actions/checkout@master
-      - name: Download Artifact
-        uses: actions/download-artifact@master
-        with:
-          name: build
-      - name: Deploy to Firebase
-        uses: w9jds/firebase-action@develop
-        with:
-          args: deploy --only functions
-        env:
-          FIREBASE_TOKEN: ${{ secrets.FIREBASE_TOKEN }}
+    - name: Check out code
+      uses: actions/checkout@master
+    - name: Deploy to Firebase
+      uses: wib-wub/deploy-firebase-functions@1.0.1
+      env:
+        FIREBASE_TOKEN: ${{ secrets.FIREBASE_TOKEN }}

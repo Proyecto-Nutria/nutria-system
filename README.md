@@ -24,11 +24,13 @@
 
 ## Development
 
-1. You can test your functions locally using:
+1. You can test out your functions locally using:
 
 ```
 firebase serve
 ```
+
+Continuous Deployment thru our [Github Actions](https://github.com/Proyecto-Nutria/deploy-firebase-functions)
 
 ## Important Notes
 

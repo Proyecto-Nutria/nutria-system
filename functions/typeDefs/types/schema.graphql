@@ -1,0 +1,67 @@
+scalar Date
+enum ProgrammingLanguage {
+  CPP
+  PYTHON
+  JAVA
+  JAVASCRIPT
+  GO
+  RUST
+}
+enum School {
+  IPN
+  UNAM
+}
+enum Company {
+  Microsoft
+  Google
+  Facebook
+}
+enum CompanyRole {
+  Intern
+  Explore
+  STEP
+  FTE
+}
+enum Role {
+  Root
+  Interviewee
+  Interviewer
+}
+type User {
+  uid: String!
+  email: String!
+  username: String!
+  role: Role
+}
+
+type Interviewee {
+  uid: String!
+  programmingLanguage: [ProgrammingLanguage]
+  school: School
+  resumeLink: String
+  roleApplyingTo: CompanyRole
+  companiesApplyingTo: [Company]
+  typesOfInterview: [String]
+  availability: [Date]
+  maxInterviewsPerWeek: Int
+  upcomingRealInterviews: [RealInterview]
+  interviews: [Interview]
+}
+type Interviewer {
+  uid: String!
+  isMentioned: Boolean
+  description: String
+}
+type Interview {
+  interviewee: Interviewee!
+  interviewer: Interviewer!
+  date: Date!
+  gDocUrl: String
+  discordRoom: String
+  confirmedByInterviewee: Boolean
+  interviews: [Interview]
+}
+type RealInterview {
+  company: Company!
+  date: Date!
+}
