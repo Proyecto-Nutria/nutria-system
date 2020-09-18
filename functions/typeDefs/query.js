@@ -4,6 +4,9 @@ const query = gql`
   type Query {
     persons: [Person]
   }
+  type Mutation{
+    setMessage(message: String): String
+  }
 `
 
 module.exports = {
