@@ -14,11 +14,13 @@ const server = new ApolloServer({
 
     var FirebaseAuthentication = function verifyIdToken () {
       return SingletonAdmin.GetInstance().auth().verifyIdToken(token)
-        .then(_ => { return true })
+        .then(token => { return token.uid })
         .catch(_ => { return false })
     }
 
-    if (await FirebaseAuthentication() === false) throw new AuthenticationError('you must be logged in')
+    const uidFirebase = await FirebaseAuthentication()
+    if (uidFirebase === false) throw new AuthenticationError('you must be logged in')
+    return { uid: uidFirebase }
   }
 })
 

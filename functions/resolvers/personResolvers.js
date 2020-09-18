@@ -3,7 +3,8 @@ const { SingletonAdmin } = require('../models')
 const personResolvers = {
   Query: {
     //  persons: (_parent, _args, context, _info) => {
-    persons: () => {
+    persons: (_parent, _args, context, _info) => {
+      console.log(context)
       return SingletonAdmin.GetInstance().database()
         .ref('persons')
         .once('value')
@@ -11,7 +12,6 @@ const personResolvers = {
         .then(val => Object.keys(val).map(key => val[key]))
     }
   },
-  //  async ({ message })
   Mutation: {
     setMessage: async (_, { message }) => {
       console.log(message)
