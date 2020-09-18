@@ -1,8 +1,8 @@
 const { personResolvers } = require('./personResolvers')
-const { companyInterviewResolvers } = require('./companyInterviewResolvers')
+// const { companyInterviewResolvers } = require('./companyInterviewResolvers')
 
-const resolvers = [personResolvers, companyInterviewResolvers]
+const resolvers = [personResolvers] //, companyInterviewResolvers]
 
 module.exports = {
-  resolvers, companyInterviewResolvers
+  resolvers // , companyInterviewResolvers
 }

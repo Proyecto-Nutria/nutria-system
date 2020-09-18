@@ -10,6 +10,14 @@ const personResolvers = {
         .once('value')
         .then(snap => snap.val())
         .then(val => Object.keys(val).map(key => val[key]))
+    },
+    users: () => {
+      console.log('touched something')
+      return SingletonAdmin.GetInstance().database()
+        .ref('users')
+        .once('value')
+        .then(snap => snap.val())
+        .then(val => Object.keys(val).map(key => val[key]))
     }
   },
   Mutation: {

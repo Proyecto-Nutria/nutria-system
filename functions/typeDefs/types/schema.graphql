@@ -30,7 +30,7 @@ enum Role {
 type User {
   uid: String!
   email: String!
-  username: String!
+  name: String!
   role: Role
 }
 
