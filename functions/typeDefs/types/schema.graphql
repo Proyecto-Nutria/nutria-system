@@ -1,4 +1,5 @@
 scalar Date
+
 enum ProgrammingLanguage {
   CPP
   PYTHON
@@ -7,26 +8,39 @@ enum ProgrammingLanguage {
   GO
   RUST
 }
+
 enum School {
   IPN
   UNAM
 }
+
 enum Company {
   Microsoft
   Google
   Facebook
 }
+
 enum CompanyRole {
   Intern
   Explore
   STEP
   FTE
 }
+
 enum Role {
   Root
   Interviewee
   Interviewer
 }
+
+enum Status{
+    NotConfirmed
+    confirmed
+    cancelledByInterviewer
+    cancelledByInterviewee
+
+}
+
 type User {
   uid: String!
   email: String!
@@ -47,20 +61,23 @@ type Interviewee {
   upcomingRealInterviews: [RealInterview]
   interviews: [Interview]
 }
+
 type Interviewer {
   uid: String!
   isMentioned: Boolean
   description: String
 }
+
 type Interview {
   interviewee: Interviewee!
   interviewer: Interviewer!
   date: Date!
   gDocUrl: String
-  discordRoom: String
-  confirmedByInterviewee: Boolean
+  place: String
+  status: Status
   interviews: [Interview]
 }
+
 type RealInterview {
   company: Company!
   date: Date!
