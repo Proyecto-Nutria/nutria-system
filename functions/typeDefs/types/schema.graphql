@@ -85,5 +85,5 @@ type Interview {
 type RealInterview {
   company: Company!
   date: Date!
-  interviewee: Interviewee!
+  user: User!
 }
