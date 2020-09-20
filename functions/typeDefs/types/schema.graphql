@@ -45,25 +45,29 @@ type User {
   uid: String!
   email: String!
   name: String!
-  role: Role
+  role: [Role!]!
+  interviewee: Interviewee
+  interviewer: Interviewer
 }
 
 type Interviewee {
   uid: String!
-  programmingLanguage: [ProgrammingLanguage]
+  user: User!
+  programmingLanguage: [ProgrammingLanguage]!
   school: School
   resumeLink: String
   roleApplyingTo: CompanyRole
-  companiesApplyingTo: [Company]
-  typesOfInterview: [String]
-  availability: [Date]
+  companiesApplyingTo: [Company]!
+  typesOfInterview: [String]!
+  availability: [Date]!
   maxInterviewsPerWeek: Int
-  upcomingRealInterviews: [RealInterview]
-  interviews: [Interview]
+  upcomingRealInterviews: [RealInterview]!
+  interviews: [Interview]!
 }
 
 type Interviewer {
   uid: String!
+  user: User!
   isMentioned: Boolean
   description: String
 }
@@ -72,13 +76,14 @@ type Interview {
   interviewee: Interviewee!
   interviewer: Interviewer!
   date: Date!
-  gDocUrl: String
-  place: String
-  status: Status
-  interviews: [Interview]
+  sharedDoc: String!
+  place: String!
+  status: Status!
+  interviews: [Interview]!
 }
 
 type RealInterview {
   company: Company!
   date: Date!
+  user: User!
 }
