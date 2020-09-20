@@ -33,12 +33,19 @@ enum Role {
   Interviewer
 }
 
-enum Status{
-    NotConfirmed
-    confirmed
-    cancelledByInterviewer
-    cancelledByInterviewee
+enum Status {
+    Not_confirmed
+    Confirmed
+    Cancelled_by_interviewer
+    Cancelled_by_interviewee
 
+}
+
+enum Score {
+    No_Hire
+    Undetermined
+    Hire
+    Strongly_Hire
 }
 
 type User {
@@ -80,6 +87,7 @@ type Interview {
   place: String!
   status: Status!
   interviews: [Interview]!
+  score: Score
 }
 
 type RealInterview {
