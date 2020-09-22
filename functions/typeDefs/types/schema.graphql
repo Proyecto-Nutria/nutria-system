@@ -47,27 +47,25 @@ enum Score {
   Strongly_Hire
 }
 
-type User {
-  uid: String!
-  email: String!
-  name: String!
-  role: [Role!]!
-  interviewee: Interviewee
-  interviewer: Interviewer
-}
-
 input UserIntervieweeInput {
   email: String!
   name: String!
-  # role: [Role!]!
   interviewee: IntervieweeInput!
-  #interviewer: Interviewer
 }
 
 input UserInterviewerInput {
   email: String!
   name: String!
-  #interviewer: Interviewer
+  #interviewer: Interviewer!
+}
+
+type User {
+  # uid: String!
+  email: String!
+  name: String!
+  role: [Role!]!
+  interviewee: Interviewee
+  interviewer: Interviewer
 }
 
 type Interviewee {

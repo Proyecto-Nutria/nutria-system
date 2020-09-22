@@ -17,19 +17,25 @@ const userResolvers = {
           } else {
             // TODO: Validate if the header has the special link to register user as interviewer
             const userRef = databaseInstance.database().ref('users/')
-            userRef.child(context.uid).set({ rol: 'interviewee' })
+            userRef.child(context.uid).set({ uid: context.uid, rol: 'interviewee' })
             return ['interviewee', true]
           }
         })
+    },
+    getAllInterviewees: () => {
+      return SingletonAdmin.GetInstance().database().ref('users/')
+        .orderByChild('rol')
+        .equalTo('interviewee')
+        .once('value')
+        .then(snap => snap.val())
+        .then(val => Object.keys(val).map(key => val[key]))
     }
   },
   Mutation: {
-    createUserInterviewee: async (_parent, _args, context, _info) => {
-      console.log(SingletonAdmin.GetInstance().database().ref('users/' + context.uid))
-      /* await SingletonAdmin.GetInstance().database().ref('users/').push({
-        name: user
-      }) */
-      return 'Inserted into database'
+    createUserInterviewee: (_parent, { user }, context) => {
+      const userRef = SingletonAdmin.GetInstance().database().ref('users/')
+      userRef.child(context.uid).update({ email: user.email, name: user.name })
+      return 'Inserted Into Database'
     }
   }
 }

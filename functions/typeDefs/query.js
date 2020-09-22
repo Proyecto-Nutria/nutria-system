@@ -4,7 +4,8 @@ const query = gql`
   type Query {
     persons: [Person],
     users: [User],
-    getUserType: [String]
+    getUserType: [String],
+    getAllInterviewees: [User]
   }
   type Mutation{
     setMessage(message: String): String,
