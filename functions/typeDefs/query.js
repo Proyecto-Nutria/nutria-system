@@ -8,7 +8,7 @@ const query = gql`
   }
   type Mutation{
     setMessage(message: String): String,
-    createUser(user: UserInput): String
+    createUserInterviewee(user: UserIntervieweeInput): String
   }
 `
 

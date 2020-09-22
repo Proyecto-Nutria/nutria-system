@@ -7,9 +7,7 @@ const userResolvers = {
     getUserType: (_parent, _args, context, _info) => {
       var databaseInstance = SingletonAdmin.GetInstance()
       return databaseInstance.database()
-        .ref('users')
-        .orderByChild('uid')
-        .equalTo(context.uid)
+        .ref('users/' + context.uid)
         .once('value')
         .then(snap => {
           if (snap.exists()) {
@@ -17,19 +15,20 @@ const userResolvers = {
             const objectIdKey = Object.keys(userSnap)[0]
             return [userSnap[objectIdKey].rol, false]
           } else {
-          // TODO: Validate if the header has the special link to register user as interviewer
-            databaseInstance.database().ref('users/').push({
-              uid: context.uid,
-              rol: 'interviewee'
-            })
+            // TODO: Validate if the header has the special link to register user as interviewer
+            const userRef = databaseInstance.database().ref('users/')
+            userRef.child(context.uid).set({ rol: 'interviewee' })
             return ['interviewee', true]
           }
         })
     }
   },
   Mutation: {
-    createUser: async (_, { user }) => {
-      console.log(user)
+    createUserInterviewee: async (_parent, _args, context, _info) => {
+      console.log(SingletonAdmin.GetInstance().database().ref('users/' + context.uid))
+      /* await SingletonAdmin.GetInstance().database().ref('users/').push({
+        name: user
+      }) */
       return 'Inserted into database'
     }
   }

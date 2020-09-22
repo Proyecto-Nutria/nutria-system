@@ -56,12 +56,17 @@ type User {
   interviewer: Interviewer
 }
 
-# TODO: Change the name to IntervieewInput
-input UserInput {
+input UserIntervieweeInput {
   email: String!
   name: String!
   # role: [Role!]!
   interviewee: IntervieweeInput!
+  #interviewer: Interviewer
+}
+
+input UserInterviewerInput {
+  email: String!
+  name: String!
   #interviewer: Interviewer
 }
 
