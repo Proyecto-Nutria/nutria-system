@@ -34,18 +34,17 @@ enum Role {
 }
 
 enum Status {
-    Not_confirmed
-    Confirmed
-    Cancelled_by_interviewer
-    Cancelled_by_interviewee
-
+  Not_confirmed
+  Confirmed
+  Cancelled_by_interviewer
+  Cancelled_by_interviewee
 }
 
 enum Score {
-    No_Hire
-    Undetermined
-    Hire
-    Strongly_Hire
+  No_Hire
+  Undetermined
+  Hire
+  Strongly_Hire
 }
 
 type User {
@@ -57,9 +56,18 @@ type User {
   interviewer: Interviewer
 }
 
+# TODO: Change the name to IntervieewInput
+input UserInput {
+  email: String!
+  name: String!
+  # role: [Role!]!
+  interviewee: IntervieweeInput!
+  #interviewer: Interviewer
+}
+
 type Interviewee {
   uid: String!
-  user: User!
+  # user: User!
   programmingLanguage: [ProgrammingLanguage]!
   school: School
   resumeLink: String
@@ -70,6 +78,19 @@ type Interviewee {
   maxInterviewsPerWeek: Int
   upcomingRealInterviews: [RealInterview]!
   interviews: [Interview]!
+}
+
+input IntervieweeInput {
+  programmingLanguage: [ProgrammingLanguage]!
+  school: School
+  resumeLink: String
+  roleApplyingTo: CompanyRole
+  companiesApplyingTo: [Company]!
+  typesOfInterview: [String]!
+  availability: [Date] # !
+  maxInterviewsPerWeek: Int!
+  #upcomingRealInterviews: [RealInterview]!
+  #interviews: [Interview]!
 }
 
 type Interviewer {
