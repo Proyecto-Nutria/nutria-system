@@ -11,29 +11,6 @@ const personResolvers = {
         .then(snap => snap.val())
         .then(val => Object.keys(val).map(key => val[key]))
     }, */
-    getUserType: (_parent, _args, context, _info) => {
-      var databaseInstance = SingletonAdmin.GetInstance()
-
-      return databaseInstance.database()
-        .ref('users')
-        .orderByChild('uid')
-        .equalTo(context.uid)
-        .once('value')
-        .then(snap => {
-          if (snap.exists()) {
-            var userSnap = snap.val()
-            const objectIdKey = Object.keys(userSnap)[0]
-            return [userSnap[objectIdKey].rol, false]
-          } else {
-          // TODO: Validate if the header has the special link to register user as interviewer
-            databaseInstance.database().ref('users/').push({
-              uid: context.uid,
-              rol: 'interviewee'
-            })
-            return ['interviewee', true]
-          }
-        })
-    },
     users: () => {
       return SingletonAdmin.GetInstance().database()
         .ref('users')
