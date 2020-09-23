@@ -22,6 +22,7 @@ const userResolvers = {
           }
         })
     },
+    // TODO: Query interviewee instead of users
     getAllInterviewees: () => {
       return SingletonAdmin.GetInstance().database().ref('users/')
         .orderByChild('rol')

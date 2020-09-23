@@ -68,13 +68,25 @@ input IntervieweeInput {
   typesOfInterview: [String]!
   availability: [Date]! # There is a problem passing ranges
   maxInterviewsPerWeek: Int!
-  upcomingRealInterviews: [RealIntervieweeInterview] # How to delete this after the real interview
+  upcomingRealInterviews: [RealIntervieweeInput] # How to delete this after the real interview
   #interviews: [Interview]!
 }
 
-input RealIntervieweeInterview {
+input RealIntervieweeInput {
   company: Company!
   date: Date!
+}
+
+input InterviewInput {
+  intervieweeUid: String!
+  interviewerUid: String!
+  date: Date!
+  #sharedDoc: String!
+  #place: String!
+  #status: Status!
+
+  # interviews: [Interview]!
+  # score: Score
 }
 
 type User {

@@ -4,12 +4,17 @@ const query = gql`
   type Query {
     persons: [Person],
     users: [User],
+    # User
     getUserType: [String],
+    # Interviewee
     getAllInterviewees: [User]
   }
   type Mutation{
     setMessage(message: String): String,
-    createUserInterviewee(user: UserIntervieweeInput): String
+    # Interviewee
+    createUserInterviewee(user: UserIntervieweeInput): String,
+    # Interview
+    createInterview(interview: InterviewInput): String
   }
 `
 
