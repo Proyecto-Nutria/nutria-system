@@ -59,6 +59,24 @@ input UserInterviewerInput {
   #interviewer: Interviewer!
 }
 
+input IntervieweeInput {
+  programmingLanguage: [ProgrammingLanguage]!
+  school: School
+  resumeLink: String
+  roleApplyingTo: CompanyRole
+  companiesApplyingTo: [Company]!
+  typesOfInterview: [String]!
+  availability: [Date]! # There is a problem passing ranges
+  maxInterviewsPerWeek: Int!
+  upcomingRealInterviews: [RealIntervieweeInterview] # How to delete this after the real interview
+  #interviews: [Interview]!
+}
+
+input RealIntervieweeInterview {
+  company: Company!
+  date: Date!
+}
+
 type User {
   # uid: String!
   email: String!
@@ -81,19 +99,6 @@ type Interviewee {
   maxInterviewsPerWeek: Int
   upcomingRealInterviews: [RealInterview]!
   interviews: [Interview]!
-}
-
-input IntervieweeInput {
-  programmingLanguage: [ProgrammingLanguage]!
-  school: School
-  resumeLink: String
-  roleApplyingTo: CompanyRole
-  companiesApplyingTo: [Company]!
-  typesOfInterview: [String]!
-  availability: [Date] # !
-  maxInterviewsPerWeek: Int!
-  #upcomingRealInterviews: [RealInterview]!
-  #interviews: [Interview]!
 }
 
 type Interviewer {
