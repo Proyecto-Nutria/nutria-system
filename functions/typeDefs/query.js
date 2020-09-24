@@ -12,7 +12,9 @@ const query = gql`
     # Interviewee
     createUserInterviewee(user: UserIntervieweeInput): String,
     # Interview
-    createInterview(interview: InterviewInput): String
+    createInterview(interview: InterviewInput): String,
+    # Invitation
+    createInvitation(email: String): String
   }
 `
 

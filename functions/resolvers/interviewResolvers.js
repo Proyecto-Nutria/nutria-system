@@ -1,5 +1,3 @@
-// const { SingletonAdmin } = require('../models')
-
 const { SingletonAdmin } = require('../models')
 
 const interviewResolvers = {
