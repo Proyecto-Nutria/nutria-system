@@ -1,5 +1,6 @@
 // const { SingletonAdmin } = require('../models')
 
+const admin = require('firebase-admin')
 const { SingletonAdmin } = require('../models')
 
 const userResolvers = {
@@ -10,16 +11,36 @@ const userResolvers = {
         .ref('users/' + context.uid)
         .once('value')
         .then(snap => {
-          if (snap.exists()) {
-            var userSnap = snap.val()
-            const objectIdKey = Object.keys(userSnap)[0]
-            return [userSnap[objectIdKey].rol, false]
-          } else {
-            // TODO: Validate if the header has the special link to register user as interviewer
-            const userRef = databaseInstance.database().ref('users/')
-            userRef.child(context.uid).set({ uid: context.uid, rol: 'interviewee' })
-            return ['interviewee', true]
-          }
+          if (snap.exists()) return [snap.val().rol, false]
+
+          const userRef = databaseInstance.database().ref('users/')
+          const invitationRef = databaseInstance.database().ref('invitations/')
+          return admin.auth().getUser(context.uid)
+            .then(userRecord => {
+              return invitationRef
+                .orderByChild('email')
+                .equalTo(userRecord.email)
+                .once('value')
+                .then(invitationSnap => {
+                  if (invitationSnap.exists()) {
+                    const objectIdKey = Object.keys(invitationSnap.val())[0]
+
+                    invitationRef.child(objectIdKey).update({
+                      used: true
+                    })
+                    userRef.child(context.uid).set({
+                      uid: context.uid,
+                      rol: 'interviewer'
+                    })
+                    return ['Interviewer First Time', true]
+                  }
+                  userRef.child(context.uid).set({
+                    uid: context.uid,
+                    rol: 'interviewee'
+                  })
+                  return ['interviewee', true]
+                })
+            })
         })
     },
     // TODO: Query interviewee instead of users
