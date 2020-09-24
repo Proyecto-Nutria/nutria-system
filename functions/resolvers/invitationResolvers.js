@@ -12,13 +12,12 @@ const invitationResolvers = {
           if (snap.exists()) {
             if (snap.val().used === true) return 'No invitation needed '
             return 'Invitation set but user not registered yet'
-          } else {
-            invitationRef.push({
-              email: email,
-              used: false
-            })
-            return 'Inserted Into Database'
           }
+          invitationRef.push({
+            email: email,
+            used: false
+          })
+          return 'Inserted Into Database'
         })
     }
   }
