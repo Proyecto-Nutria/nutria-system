@@ -2,8 +2,6 @@ const { gql } = require('apollo-server-express')
 
 const query = gql`
   type Query {
-    persons: [Person],
-    users: [User],
     # User
     getUserType: [String],
     # Interviewee
