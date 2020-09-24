@@ -133,6 +133,7 @@ type Interview {
 
 type RealInterview {
   company: Company!
+  position: CompanyRole
   date: Date!
   user: User!
 }
