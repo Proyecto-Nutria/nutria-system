@@ -121,3 +121,4 @@ dist
 
 # keys
 nutria-system-firebase-adminsdk*.json
+google-credentials.json

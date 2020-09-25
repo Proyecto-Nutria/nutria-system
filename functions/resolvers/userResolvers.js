@@ -1,7 +1,12 @@
-// const { SingletonAdmin } = require('../models')
-
 const admin = require('firebase-admin')
 const { SingletonAdmin } = require('../models')
+const { google } = require('googleapis')
+const OAuth2 = google.auth.OAuth2
+const calendar = google.calendar({
+  version: 'v3'
+})
+
+const googleCredentials = require('../config/google-credentials.json')
 
 const userResolvers = {
   Query: {
@@ -12,7 +17,6 @@ const userResolvers = {
         .once('value')
         .then(snap => {
           if (snap.exists()) return [snap.val().rol, false]
-
           const userRef = databaseInstance.database().ref('users/')
           const invitationRef = databaseInstance.database().ref('invitations/')
           return admin.auth().getUser(context.uid)
@@ -24,7 +28,6 @@ const userResolvers = {
                 .then(invitationSnap => {
                   if (invitationSnap.exists()) {
                     const objectIdKey = Object.keys(invitationSnap.val())[0]
-
                     invitationRef.child(objectIdKey).update({
                       used: true
                     })
@@ -45,6 +48,43 @@ const userResolvers = {
     },
     // TODO: Query interviewee instead of users
     getAllInterviewees: () => {
+      const eventData = {
+        eventName: 'Firebase testing',
+        description: 'Test',
+        starTime: new Date(),
+        endTime: new Date()
+      }
+
+      const oAuth2Client = new OAuth2(
+        googleCredentials.web.client_id,
+        googleCredentials.web.client_secret,
+        googleCredentials.web.redirect_uris[1]
+      )
+
+      oAuth2Client.setCredentials({
+        refresh_token: googleCredentials.refresh_token
+      })
+
+      // Todo: Catch errors coming from Google API
+      calendar.events.insert({
+        auth: oAuth2Client,
+        calendarId: 'primary',
+        resource: {
+          summary: eventData.eventName,
+          start: {
+            dateTime: eventData.starTime,
+            timezone: 'EST'
+          },
+          end: {
+            dateTime: eventData.starTime,
+            timezone: 'EST'
+          }
+        }
+      }).then(console.log('Calendar'))
+
+      // Be careful, this may be a production service. Calendar
+      // it means that people want to avoid because local testing is meant to be hermetic
+
       return SingletonAdmin.GetInstance().database()
         .ref('users/')
         .orderByChild('rol')
