@@ -5,6 +5,13 @@ const OAuth2 = google.auth.OAuth2
 const calendar = google.calendar({
   version: 'v3'
 })
+const docs = google.docs(
+  {
+    version: 'v1'
+  }
+)
+
+const drive = google.drive({ version: 'v3' })
 
 const googleCredentials = require('../config/google-credentials.json')
 
@@ -62,11 +69,11 @@ const userResolvers = {
       )
 
       oAuth2Client.setCredentials({
-        refresh_token: googleCredentials.refresh_token
+        refresh_token: googleCredentials.docs_drive_refresh_token
       })
 
       // Todo: Catch errors coming from Google API
-      calendar.events.insert({
+      /* calendar.events.insert({
         auth: oAuth2Client,
         calendarId: 'primary',
         resource: {
@@ -80,7 +87,54 @@ const userResolvers = {
             timezone: 'EST'
           }
         }
-      }).then(console.log('Calendar'))
+      }).then(console.log('Calendar')) */
+
+      /*
+      docs.documents.create({
+        auth: oAuth2Client,
+        documentId: 'firebase-id-test',
+        resource: {
+          title: 'firebase-name-test'
+        }
+      }).then(data => console.log(data.data.documentId)) */
+
+      var pageToken = null
+
+      drive.files.list({
+        auth: oAuth2Client,
+        q: "mimeType= 'application/vnd.google-apps.folder' and name='FirebaseTesting'",
+        fields: 'nextPageToken, files(id, name)',
+        spaces: 'drive',
+        pageToken: pageToken
+      }, function (err, res) {
+        if (err) {
+          // Handle error
+          console.error(err)
+        } else {
+          res.data.files.forEach(function (file) {
+            console.log('Found file: ', file.name, file.id)
+          })
+        }
+      })
+      /*
+      var fileMetadata = {
+        name: 'Firebase Doc',
+        parents: [''], #Folder Id
+        mimeType: 'application/vnd.google-apps.document'
+        // title: 'Document'
+      }
+      drive.files.create({
+        auth: oAuth2Client,
+        resource: fileMetadata,
+        fields: 'id'
+      }, function (err, file) {
+        if (err) {
+          // Handle error
+          console.error(err)
+        } else {
+          console.log('Folder Id: ', file.data.id)
+        }
+      }) */
 
       // Be careful, this may be a production service. Calendar
       // it means that people want to avoid because local testing is meant to be hermetic

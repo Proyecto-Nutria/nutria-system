@@ -5,7 +5,7 @@ const sendgridCredentials = require('../config/sendgrid-credentials.json')
 const interviewResolvers = {
   Mutation: {
     createInterview: (_, { interview }) => {
-      // Example of email using sendgrid
+      // TODO: Create email template
       sgMail.setApiKey(sendgridCredentials.api_key)
       const msg = {
         to: 'reyesfragosoroberto@gmail.com',
@@ -27,6 +27,16 @@ const interviewResolvers = {
       userRef.push(JSON.parse(JSON.stringify(interview)))
       return 'Inserted Into Database'
     }
+    /*
+    confirmInterview: (_, { interview }) => {
+      const interviewRef = SingletonAdmin.GetInstance().database().ref('interviews/' + interview.id)
+      interviewRef.update({ status: 'confirmed' })
+      // TODO: - Integrate google docs API
+      // - Create google calendar event
+      // - Select a room
+      userRef.push(JSON.parse(JSON.stringify(interview)))
+      return 'Inserted Into Database'
+    } */
   }
 }
 
