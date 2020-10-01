@@ -1,3 +1,6 @@
+const fs = require('fs')
+const path = require('path')
+
 const { SingletonAdmin } = require('../models')
 const sgMail = require('@sendgrid/mail')
 const sendgridCredentials = require('../config/sendgrid-credentials.json')
@@ -8,14 +11,17 @@ const {
 const interviewResolvers = {
   Mutation: {
     createInterview: (_, { interview }) => {
-      // TODO: Create email template
+      const openFile = (filePath) => fs.readFileSync(path.resolve(__dirname, filePath), 'utf8')
+      const header = openFile('../template/header.html')
+      const content = openFile('../template/content.html').replace('[[username]]', 'Nutria Name')
+      const footer = openFile('../template/footer.html')
+
       sgMail.setApiKey(sendgridCredentials.api_key)
       const msg = {
         to: 'reyesfragosoroberto@gmail.com',
         from: 'proyecto.nutria.escom@gmail.com',
-        subject: 'Nutrimail',
-        text: 'and easy to do anywhere, even with Node.js',
-        html: '<strong>and easy to do anywhere, even with Node.js</strong>'
+        subject: 'Interview Remainder', // TODO: Add day of the interview
+        html: header.concat(content, footer)
       }
       sgMail
         .send(msg)
@@ -26,8 +32,8 @@ const interviewResolvers = {
           console.error(error)
         })
 
-      const userRef = SingletonAdmin.GetInstance().database().ref(INTERVIEW_REF)
-      userRef.push(JSON.parse(JSON.stringify(interview)))
+      /* const userRef = SingletonAdmin.GetInstance().database().ref(INTERVIEW_REF)
+      userRef.push(JSON.parse(JSON.stringify(interview))) */
       return 'Inserted Into Database'
     }
     /*
