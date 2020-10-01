@@ -1,5 +1,9 @@
 const { SingletonAdmin } = require('../models')
-const { Constants } = require('./constants')
+const {
+  FIREBASE_VAL,
+  INVITATION_REF,
+  INVITATION_EMAIL_ATTR
+} = require('./constants')
 
 const invitationResolvers = {
   Mutation: {
@@ -7,15 +11,16 @@ const invitationResolvers = {
       const invitationRef = SingletonAdmin
         .GetInstance()
         .database()
-        .ref(Constants.INVITATION_REF)
+        .ref(INVITATION_REF)
 
       return invitationRef
-        .orderByChild(Constants.INVITATION_EMAIL_ATTR)
+        .orderByChild(INVITATION_EMAIL_ATTR)
         .equalTo(email)
-        .once('value')
+        .once(FIREBASE_VAL)
         .then(snap => {
           if (snap.exists()) {
-            if (snap.val().used === true) return 'No invitation needed '
+            const invitation = snap.val()[Object.keys(snap.val())[0]]
+            if (invitation.used === true) return 'No invitation needed '
             return 'Invitation set but user not registered yet'
           }
           invitationRef.push({

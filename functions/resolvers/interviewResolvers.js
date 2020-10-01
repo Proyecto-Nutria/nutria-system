@@ -1,6 +1,9 @@
 const { SingletonAdmin } = require('../models')
 const sgMail = require('@sendgrid/mail')
 const sendgridCredentials = require('../config/sendgrid-credentials.json')
+const {
+  INTERVIEW_REF
+} = require('./constants')
 
 const interviewResolvers = {
   Mutation: {
@@ -23,7 +26,7 @@ const interviewResolvers = {
           console.error(error)
         })
 
-      const userRef = SingletonAdmin.GetInstance().database().ref('interviews/')
+      const userRef = SingletonAdmin.GetInstance().database().ref(INTERVIEW_REF)
       userRef.push(JSON.parse(JSON.stringify(interview)))
       return 'Inserted Into Database'
     }

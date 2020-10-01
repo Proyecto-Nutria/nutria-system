@@ -10,6 +10,13 @@ const docs = google.docs(
     version: 'v1'
   }
 )
+const {
+  FIREBASE_VAL,
+  INTERVIEWEE_VAL,
+  USER_REF,
+  USER_ROLE_ATTR,
+  INTERVIEWEE_REF
+} = require('./constants')
 
 const drive = google.drive({ version: 'v3' })
 
@@ -139,11 +146,13 @@ const userResolvers = {
       // Be careful, this may be a production service. Calendar
       // it means that people want to avoid because local testing is meant to be hermetic
 
-      return SingletonAdmin.GetInstance().database()
-        .ref('users/')
-        .orderByChild('rol')
-        .equalTo('interviewee')
-        .once('value')
+      return SingletonAdmin
+        .GetInstance()
+        .database()
+        .ref(USER_REF)
+        .orderByChild(USER_ROLE_ATTR)
+        .equalTo(INTERVIEWEE_VAL)
+        .once(FIREBASE_VAL)
         .then(snap => snap.val())
         .then(val => Object.keys(val).map(key => val[key]))
     }
@@ -151,8 +160,9 @@ const userResolvers = {
   Mutation: {
     createUserInterviewee: (_parent, { user }, context) => {
       const userUid = context.uid
-      const userRef = SingletonAdmin.GetInstance().database().ref('users/')
-      const intervieweeRef = SingletonAdmin.GetInstance().database().ref('interviewee/')
+      const userRef = SingletonAdmin.GetInstance().database().ref(USER_REF)
+      const intervieweeRef = SingletonAdmin.GetInstance().database().ref(INTERVIEWEE_REF)
+
       user.interviewee.uid = userUid
       userRef.child(userUid).update({ email: user.email, name: user.name })
       // Set will overwrite the data at the specified location

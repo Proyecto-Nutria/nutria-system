@@ -1,11 +1,15 @@
-'use strict'
+module.exports = {
+  FIREBASE_VAL: 'value',
+  INTERVIEWEE_VAL: 'interviewee',
 
-const constants = {
   USER_REF: 'users/',
-  INTERVIEW_REF: 'invitations/',
-  INTERVIEWEE_REF: 'users/',
   USER_ROLE_ATTR: 'role',
-  INVITATION_EMAIL_ATTR: 'email'
-}
 
-Object.freeze(constants)
+  INTERVIEW_REF: 'interviews/',
+
+  INTERVIEWEE_REF: 'interviewee/',
+
+  INVITATION_REF: 'invitations/',
+  INVITATION_EMAIL_ATTR: 'email'
+
+}
