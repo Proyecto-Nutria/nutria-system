@@ -1,11 +1,16 @@
 const { SingletonAdmin } = require('../models')
+const { Constants } = require('./constants')
 
 const invitationResolvers = {
   Mutation: {
     createInvitation: (_, { email }) => {
-      const invitationRef = SingletonAdmin.GetInstance().database().ref('invitations/')
+      const invitationRef = SingletonAdmin
+        .GetInstance()
+        .database()
+        .ref(Constants.INVITATION_REF)
+
       return invitationRef
-        .orderByChild('email')
+        .orderByChild(Constants.INVITATION_EMAIL_ATTR)
         .equalTo(email)
         .once('value')
         .then(snap => {
