@@ -1,15 +1,5 @@
 const admin = require('firebase-admin')
 const { SingletonAdmin } = require('../models')
-const { google } = require('googleapis')
-const OAuth2 = google.auth.OAuth2
-const calendar = google.calendar({
-  version: 'v3'
-})
-const docs = google.docs(
-  {
-    version: 'v1'
-  }
-)
 const {
   FIREBASE_VAL,
   INTERVIEWEE_VAL,
@@ -17,10 +7,6 @@ const {
   USER_ROLE_ATTR,
   INTERVIEWEE_REF
 } = require('./constants')
-
-const drive = google.drive({ version: 'v3' })
-
-const googleCredentials = require('../config/google-credentials.json')
 
 const userResolvers = {
   Query: {
@@ -62,90 +48,6 @@ const userResolvers = {
     },
     // TODO: Query interviewee instead of users
     getAllInterviewees: () => {
-      const eventData = {
-        eventName: 'Firebase testing',
-        description: 'Test',
-        starTime: new Date(),
-        endTime: new Date()
-      }
-
-      const oAuth2Client = new OAuth2(
-        googleCredentials.web.client_id,
-        googleCredentials.web.client_secret,
-        googleCredentials.web.redirect_uris[1]
-      )
-
-      oAuth2Client.setCredentials({
-        refresh_token: googleCredentials.docs_drive_refresh_token
-      })
-
-      // Todo: Catch errors coming from Google API
-      /* calendar.events.insert({
-        auth: oAuth2Client,
-        calendarId: 'primary',
-        resource: {
-          summary: eventData.eventName,
-          start: {
-            dateTime: eventData.starTime,
-            timezone: 'EST'
-          },
-          end: {
-            dateTime: eventData.starTime,
-            timezone: 'EST'
-          }
-        }
-      }).then(console.log('Calendar')) */
-
-      /*
-      docs.documents.create({
-        auth: oAuth2Client,
-        documentId: 'firebase-id-test',
-        resource: {
-          title: 'firebase-name-test'
-        }
-      }).then(data => console.log(data.data.documentId)) */
-
-      var pageToken = null
-
-      drive.files.list({
-        auth: oAuth2Client,
-        q: "mimeType= 'application/vnd.google-apps.folder' and name='FirebaseTesting'",
-        fields: 'nextPageToken, files(id, name)',
-        spaces: 'drive',
-        pageToken: pageToken
-      }, function (err, res) {
-        if (err) {
-          // Handle error
-          console.error(err)
-        } else {
-          res.data.files.forEach(function (file) {
-            console.log('Found file: ', file.name, file.id)
-          })
-        }
-      })
-      /*
-      var fileMetadata = {
-        name: 'Firebase Doc',
-        parents: [''], #Folder Id
-        mimeType: 'application/vnd.google-apps.document'
-        // title: 'Document'
-      }
-      drive.files.create({
-        auth: oAuth2Client,
-        resource: fileMetadata,
-        fields: 'id'
-      }, function (err, file) {
-        if (err) {
-          // Handle error
-          console.error(err)
-        } else {
-          console.log('Folder Id: ', file.data.id)
-        }
-      }) */
-
-      // Be careful, this may be a production service. Calendar
-      // it means that people want to avoid because local testing is meant to be hermetic
-
       return SingletonAdmin
         .GetInstance()
         .database()
