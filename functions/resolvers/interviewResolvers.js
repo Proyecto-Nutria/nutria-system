@@ -3,6 +3,9 @@ const path = require('path')
 
 const { SingletonAdmin } = require('../models')
 const {
+  FIREBASE_VAL,
+  ROOM_REF,
+  ROOM_DATE_ATTR,
   INTERVIEW_REF
 } = require('./constants')
 
@@ -32,6 +35,41 @@ const interviewResolvers = {
 
       interviewRef
         .update({ status: 'confirmed' }) */
+
+      SingletonAdmin
+        .GetInstance()
+        .database()
+        .ref(ROOM_REF)
+        .orderByChild('20dec20' + ROOM_DATE_ATTR)
+        .equalTo('20dec20')
+        .once(FIREBASE_VAL)
+        .then(snap => {
+          const userBHour = 1
+          const userEHour = 3
+          var possibleRoom = 1
+          const allIntervals = snap.val()
+          const currentDate = '20dec20'
+          var currentRoomNumber
+          for (currentRoomNumber = 1; currentRoomNumber <= 1; currentRoomNumber++) {
+            const currentRoom = 'room' + currentRoomNumber
+            const intervals = allIntervals[currentRoom][currentDate].intervals
+            console.log(intervals)
+            for (const interval of intervals) {
+              const cleanedInterval = interval.split('-')
+
+              if ((userBHour > cleanedInterval[0] && userBHour < cleanedInterval[1]) ||
+              (userEHour > cleanedInterval[0] && userEHour < cleanedInterval[1])) {
+                possibleRoom += 1
+                break
+              }
+            }
+            break
+          }
+
+          console.log('Room will be' + possibleRoom)
+        })
+        // .then(val => console.log(Object.keys(val).map(key => val[key])))
+        // .then(val => console.log(val))
 
       // TODO:- Select a room
       // TODO: - Change the refresh token to use all the permission needed
@@ -79,6 +117,7 @@ const interviewResolvers = {
         }) */
 
       // Get the folder id where the doc is going to be
+      /*
       var folderId = await googleDrive
         .files
         .list({
@@ -97,9 +136,10 @@ const interviewResolvers = {
         })
         .catch((error) => {
           console.error(error)
-        })
+        }) */
 
       // If the folder does not exist, create a new one
+      /*
       if (folderId === '') {
         const folderMetadata = {
           name: 'DummyFolder',
@@ -120,9 +160,10 @@ const interviewResolvers = {
           .catch((error) => {
             console.error(error)
           })
-      }
+      } */
 
       // Create the google docs inside the folder
+      /*
       const fileMetadata = {
         name: 'Interview Doc',
         parents: [folderId],
@@ -141,9 +182,10 @@ const interviewResolvers = {
         })
         .catch((error) => {
           console.error(error)
-        })
+        }) */
 
       // Change the permissions of the google doc
+      /*
       googleDrive
         .permissions
         .create(
@@ -158,7 +200,7 @@ const interviewResolvers = {
           }
         ).catch((error) => {
           console.error(error)
-        })
+        }) */
 
       // Be careful, this may be a production service. Calendar
       // it means that people want to avoid because local testing is meant to be hermetic

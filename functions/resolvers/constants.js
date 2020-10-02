@@ -10,6 +10,9 @@ module.exports = {
   INTERVIEWEE_REF: 'interviewee/',
 
   INVITATION_REF: 'invitations/',
-  INVITATION_EMAIL_ATTR: 'email'
+  INVITATION_EMAIL_ATTR: 'email',
+
+  ROOM_REF: 'rooms/',
+  ROOM_DATE_ATTR: '/date'
 
 }
