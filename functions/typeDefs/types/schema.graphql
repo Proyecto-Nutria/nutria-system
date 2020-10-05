@@ -137,3 +137,11 @@ type RealInterview {
   date: Date!
   user: User!
 }
+
+# The new schema
+type sInterview {
+  intervieweeUid_date: String
+  interviewerUid_date: String
+  room: String
+  docs: String
+}

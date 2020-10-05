@@ -6,7 +6,8 @@ const {
   FIREBASE_VAL,
   ROOM_REF,
   ROOM_DATE_ATTR,
-  INTERVIEW_REF
+  INTERVIEW_REF,
+  INTERVIEW_INTERVIEWEE_UIDDATE
 } = require('./constants')
 
 const sgMail = require('@sendgrid/mail')
@@ -19,6 +20,19 @@ const googleDrive = google.drive({ version: 'v3' })
 const googleCredentials = require('../config/google-credentials.json')
 
 const interviewResolvers = {
+  Query: {
+    getIncomingInterviews: (_parent, { user }, context) => {
+      return SingletonAdmin
+        .GetInstance()
+        .database()
+        .ref(INTERVIEW_REF)
+        .orderByChild(INTERVIEW_INTERVIEWEE_UIDDATE)
+        .startAt(`${context.uid}_${Date.now()}`)
+        .once(FIREBASE_VAL)
+        .then(snap => snap.val())
+        .then(val => Object.keys(val).map(key => val[key]))
+    }
+  },
   Mutation: {
     createInterview: (_, { interview }) => {
       const userRef = SingletonAdmin.GetInstance().database().ref(INTERVIEW_REF)
