@@ -4,6 +4,8 @@ const query = gql`
   type Query {
     # User
     getUserType: [String],
+    # Interviews
+    getIncomingInterviews: [sInterview],
     # Interviewee
     getAllInterviewees: [User]
   }
