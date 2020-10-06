@@ -3,28 +3,31 @@ const { SingletonAdmin } = require('../models')
 const {
   FIREBASE_VAL,
   INTERVIEWEE_VAL,
+  INTERVIEWER_VAL,
   USER_REF,
-  USER_ROLE_ATTR,
-  INTERVIEWEE_REF
+  INTERVIEWEE_REF,
+  INVITATION_REF,
+  INVITATION_EMAIL_ATTR
 } = require('./constants')
 
 const userResolvers = {
   Query: {
     getUserType: (_parent, _args, context, _info) => {
       var databaseInstance = SingletonAdmin.GetInstance()
-      return databaseInstance.database()
-        .ref('users/' + context.uid)
-        .once('value')
+      return databaseInstance
+        .database()
+        .ref(USER_REF + context.uid)
+        .once(FIREBASE_VAL)
         .then(snap => {
-          if (snap.exists()) return [snap.val().rol, false]
-          const userRef = databaseInstance.database().ref('users/')
-          const invitationRef = databaseInstance.database().ref('invitations/')
+          if (snap.exists()) return [snap.val().role, false]
+          const userRef = databaseInstance.database().ref(USER_REF)
+          const invitationRef = databaseInstance.database().ref(INVITATION_REF)
           return admin.auth().getUser(context.uid)
             .then(userRecord => {
               return invitationRef
-                .orderByChild('email')
+                .orderByChild(INVITATION_EMAIL_ATTR)
                 .equalTo(userRecord.email)
-                .once('value')
+                .once(FIREBASE_VAL)
                 .then(invitationSnap => {
                   if (invitationSnap.exists()) {
                     const objectIdKey = Object.keys(invitationSnap.val())[0]
@@ -33,20 +36,25 @@ const userResolvers = {
                     })
                     userRef.child(context.uid).set({
                       uid: context.uid,
-                      rol: 'interviewer'
+                      rol: INTERVIEWER_VAL,
+                      name: userRecord.displayName,
+                      email: userRecord.email
                     })
-                    return ['Interviewer First Time', true]
+                    return [INTERVIEWER_VAL, true]
                   }
                   userRef.child(context.uid).set({
                     uid: context.uid,
-                    rol: 'interviewee'
+                    rol: INTERVIEWEE_VAL,
+                    name: userRecord.displayName,
+                    email: userRecord.email
                   })
-                  return ['interviewee', true]
+                  return [INTERVIEWEE_VAL, true]
                 })
             })
         })
-    },
+    }
     // TODO: Query interviewee instead of users
+    /*
     getAllInterviewees: () => {
       return SingletonAdmin
         .GetInstance()
@@ -57,7 +65,7 @@ const userResolvers = {
         .once(FIREBASE_VAL)
         .then(snap => snap.val())
         .then(val => Object.keys(val).map(key => val[key]))
-    }
+    } */
   },
   Mutation: {
     createUserInterviewee: (_parent, { user }, context) => {

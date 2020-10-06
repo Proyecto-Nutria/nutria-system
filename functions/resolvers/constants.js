@@ -1,6 +1,7 @@
 module.exports = {
   FIREBASE_VAL: 'value',
   INTERVIEWEE_VAL: 'interviewee',
+  INTERVIEWER_VAL: 'interviewer',
 
   USER_REF: 'users/',
   USER_ROLE_ATTR: 'role',
