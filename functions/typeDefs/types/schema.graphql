@@ -47,16 +47,6 @@ enum Score {
   Strongly_Hire
 }
 
-input UserIntervieweeInput {
-  interviewee: IntervieweeInput!
-}
-
-input UserInterviewerInput {
-  email: String!
-  name: String!
-  #interviewer: Interviewer!
-}
-
 input IntervieweeInput {
   programmingLanguage: [ProgrammingLanguage]!
   school: School
@@ -68,6 +58,11 @@ input IntervieweeInput {
   maxInterviewsPerWeek: Int!
   upcomingRealInterviews: [RealIntervieweeInput] # How to delete this after the real interview
   #interviews: [Interview]!
+}
+
+input InterviewerInput {
+  isMentioned: Boolean
+  description: String
 }
 
 input RealIntervieweeInput {

@@ -5,13 +5,13 @@ const {
 
 const intervieweeResolver = {
   Mutation: {
-    createInterviewee: (_parent, { user }, context) => {
-      const userUid = context.uid
+    createInterviewee: (_parent, { interviewee }, context) => {
+      const intervieweeUid = context.uid
       const intervieweeRef = SingletonAdmin.GetInstance().database().ref(INTERVIEWEE_REF)
 
-      user.interviewee.uid = userUid
+      interviewee.uid = intervieweeUid
       // Set will overwrite the data at the specified location
-      intervieweeRef.child(userUid).set(JSON.parse(JSON.stringify(user.interviewee)))
+      intervieweeRef.child(intervieweeUid).set(JSON.parse(JSON.stringify(interviewee)))
       return 'Inserted Into Database'
     }
   }

@@ -10,7 +10,9 @@ module.exports = {
   INTERVIEW_INTERVIEWEE_UIDDATE: 'intervieweeUid_date',
   INTERVIEW_INTERVIEWER_UIDDATE: 'interviewerUid_date',
 
-  INTERVIEWEE_REF: 'interviewee/',
+  INTERVIEWER_REF: 'interviewers/',
+
+  INTERVIEWEE_REF: 'interviewees/',
 
   INVITATION_REF: 'invitations/',
   INVITATION_EMAIL_ATTR: 'email',

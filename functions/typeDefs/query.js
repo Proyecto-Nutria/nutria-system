@@ -11,8 +11,10 @@ const query = gql`
   }
   type Mutation{
     setMessage(message: String): String,
+    # Interviewer
+    createInterviewer(interviewer: InterviewerInput): String,
     # Interviewee
-    createInterviewee(user: UserIntervieweeInput): String,
+    createInterviewee(interviewee: IntervieweeInput): String,
     # Interview
     createInterview(interview: InterviewInput): String,
     confirmInterview(interview: InterviewInput): String, #TODO: Change to a proper input
