@@ -48,8 +48,6 @@ enum Score {
 }
 
 input UserIntervieweeInput {
-  email: String!
-  name: String!
   interviewee: IntervieweeInput!
 }
 

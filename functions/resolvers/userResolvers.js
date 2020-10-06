@@ -5,7 +5,6 @@ const {
   INTERVIEWEE_VAL,
   INTERVIEWER_VAL,
   USER_REF,
-  INTERVIEWEE_REF,
   INVITATION_REF,
   INVITATION_EMAIL_ATTR
 } = require('./constants')
@@ -66,19 +65,6 @@ const userResolvers = {
         .then(snap => snap.val())
         .then(val => Object.keys(val).map(key => val[key]))
     } */
-  },
-  Mutation: {
-    createUserInterviewee: (_parent, { user }, context) => {
-      const userUid = context.uid
-      const userRef = SingletonAdmin.GetInstance().database().ref(USER_REF)
-      const intervieweeRef = SingletonAdmin.GetInstance().database().ref(INTERVIEWEE_REF)
-
-      user.interviewee.uid = userUid
-      userRef.child(userUid).update({ email: user.email, name: user.name })
-      // Set will overwrite the data at the specified location
-      intervieweeRef.child(userUid).set(JSON.parse(JSON.stringify(user.interviewee)))
-      return 'Inserted Into Database'
-    }
   }
 }
 
