@@ -57,7 +57,7 @@ enum Score {
 
 input IntervieweeInput {
   school: School
-  resumeLink: String # TODO: See how we're going to upload the resume
+  resume: Upload!
 }
 
 input InterviewerInput {
