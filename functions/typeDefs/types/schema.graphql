@@ -1,23 +1,29 @@
 scalar Date
 
 enum ProgrammingLanguage {
-  CPP
-  PYTHON
-  JAVA
-  JAVASCRIPT
-  GO
-  RUST
+  cpp
+  python
+  java
+  javascript
+  go
+  rust
 }
 
 enum School {
   IPN
   UNAM
+  CIMAT
+  NONLISTED
 }
 
 enum Company {
-  Microsoft
-  Google
+  Amazon
   Facebook
+  Github
+  Google
+  Microsoft
+  Netflix
+  Twitter
 }
 
 enum CompanyRole {
@@ -27,37 +33,31 @@ enum CompanyRole {
   FTE
 }
 
-enum Role {
-  Root
-  Interviewee
-  Interviewer
+enum TypeOfInterview {
+  se # Software Engineer
+  ml # Machine Learning
+  re # Reliability Engineering
+  ds # Data science
 }
 
-enum Status {
-  Not_confirmed
-  Confirmed
-  Cancelled_by_interviewer
-  Cancelled_by_interviewee
+enum Role {
+  root
+  interviewee
+  interviewer
 }
 
 enum Score {
-  No_Hire
-  Undetermined
-  Hire
-  Strongly_Hire
+  no_hire
+  undetermined
+  hire
+  strongly_hire
 }
 
+## Inputs are for receiving information from the client
+
 input IntervieweeInput {
-  programmingLanguage: [ProgrammingLanguage]!
   school: School
-  resumeLink: String
-  roleApplyingTo: CompanyRole
-  companiesApplyingTo: [Company]!
-  typesOfInterview: [String]!
-  availability: [Date]! # There is a problem passing ranges
-  maxInterviewsPerWeek: Int!
-  upcomingRealInterviews: [RealIntervieweeInput] # How to delete this after the real interview
-  #interviews: [Interview]!
+  resumeLink: String # TODO: See how we're going to upload the resume
 }
 
 input InterviewerInput {
@@ -65,76 +65,53 @@ input InterviewerInput {
   description: String
 }
 
-input RealIntervieweeInput {
-  company: Company!
-  date: Date!
+input PoolInput {
+  intervieweeUid: String!
+  priority: Int! # TODO: Create the algorithm to create the score
+  programmingLanguage: [ProgrammingLanguage]!
+  roleApplyingTo: CompanyRole
+  typesOfInterview: TypeOfInterview!
+  companiesApplyingTo: [Company]!
+  numberOfInterviews: Int!
+  # TODO: See how we're going to deal with the ranges
+  # TODO: Erase the range when an interview is scheduled to avoid problems
+  availability: [Date]!
 }
 
 input InterviewInput {
   intervieweeUid: String!
   interviewerUid: String!
   date: Date!
-  #sharedDoc: String!
-  #place: String!
-  #status: Status!
-
-  # interviews: [Interview]!
-  # score: Score
 }
 
+## Types are for querying the information
+
 type User {
-  # uid: String!
+  uid: String!
   email: String!
   name: String!
   role: [Role!]!
-  interviewee: Interviewee
-  interviewer: Interviewer
 }
 
+# TODO: See if it is necessary to join user with interviewee and interviewer
 type Interviewee {
   uid: String!
-  # user: User!
-  programmingLanguage: [ProgrammingLanguage]!
   school: School
-  resumeLink: String
-  roleApplyingTo: CompanyRole
   companiesApplyingTo: [Company]!
-  typesOfInterview: [String]!
-  availability: [Date]!
-  maxInterviewsPerWeek: Int
-  upcomingRealInterviews: [RealInterview]!
-  interviews: [Interview]!
 }
 
 type Interviewer {
   uid: String!
-  user: User!
   isMentioned: Boolean
   description: String
 }
 
 type Interview {
-  interviewee: Interviewee!
-  interviewer: Interviewer!
+  intervieweeUid_date: String!
+  interviewerUid_date: String!
   date: Date!
-  sharedDoc: String!
-  place: String!
-  status: Status!
-  interviews: [Interview]!
-  score: Score
-}
-
-type RealInterview {
-  company: Company!
-  position: CompanyRole
-  date: Date!
-  user: User!
-}
-
-# The new schema
-type sInterview {
-  intervieweeUid_date: String
-  interviewerUid_date: String
+  confirmed: Boolean!
+  doc: String
   room: String
-  docs: String
+  score: Score
 }

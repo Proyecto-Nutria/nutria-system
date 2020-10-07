@@ -5,7 +5,7 @@ const query = gql`
     # User
     getUserType: [String],
     # Interviews
-    getIncomingInterviews: [sInterview],
+    getIncomingInterviews: [Interview],
     # Interviewee
     getAllInterviewees: [User]
   }
@@ -17,7 +17,7 @@ const query = gql`
     createInterviewee(interviewee: IntervieweeInput): String,
     # Interview
     createInterview(interview: InterviewInput): String,
-    confirmInterview(interview: InterviewInput): String, #TODO: Change to a proper input
+    confirmInterview(interview: InterviewInput): String,
     # Invitation
     createInvitation(email: String): String
   }

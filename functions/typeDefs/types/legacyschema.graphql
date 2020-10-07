@@ -1,0 +1,140 @@
+scalar Date
+
+enum ProgrammingLanguage {
+  CPP
+  PYTHON
+  JAVA
+  JAVASCRIPT
+  GO
+  RUST
+}
+
+enum School {
+  IPN
+  UNAM
+}
+
+enum Company {
+  Microsoft
+  Google
+  Facebook
+}
+
+enum CompanyRole {
+  Intern
+  Explore
+  STEP
+  FTE
+}
+
+enum Role {
+  Root
+  Interviewee
+  Interviewer
+}
+
+enum Status {
+  Not_confirmed
+  Confirmed
+  Cancelled_by_interviewer
+  Cancelled_by_interviewee
+}
+
+enum Score {
+  No_Hire
+  Undetermined
+  Hire
+  Strongly_Hire
+}
+
+input IntervieweeInput {
+  programmingLanguage: [ProgrammingLanguage]!
+  school: School
+  resumeLink: String
+  roleApplyingTo: CompanyRole
+  companiesApplyingTo: [Company]!
+  typesOfInterview: [String]!
+  availability: [Date]! # There is a problem passing ranges
+  maxInterviewsPerWeek: Int!
+  upcomingRealInterviews: [RealIntervieweeInput] # How to delete this after the real interview
+  #interviews: [Interview]!
+}
+
+input InterviewerInput {
+  isMentioned: Boolean
+  description: String
+}
+
+input RealIntervieweeInput {
+  company: Company!
+  date: Date!
+}
+
+input InterviewInput {
+  intervieweeUid: String!
+  interviewerUid: String!
+  date: Date!
+  #sharedDoc: String!
+  #place: String!
+  #status: Status!
+
+  # interviews: [Interview]!
+  # score: Score
+}
+
+type User {
+  # uid: String!
+  email: String!
+  name: String!
+  role: [Role!]!
+  interviewee: Interviewee
+  interviewer: Interviewer
+}
+
+type Interviewee {
+  uid: String!
+  # user: User!
+  programmingLanguage: [ProgrammingLanguage]!
+  school: School
+  resumeLink: String
+  roleApplyingTo: CompanyRole
+  companiesApplyingTo: [Company]!
+  typesOfInterview: [String]!
+  availability: [Date]!
+  maxInterviewsPerWeek: Int
+  upcomingRealInterviews: [RealInterview]!
+  interviews: [Interview]!
+}
+
+type Interviewer {
+  uid: String!
+  user: User!
+  isMentioned: Boolean
+  description: String
+}
+
+type Interview {
+  interviewee: Interviewee!
+  interviewer: Interviewer!
+  date: Date!
+  sharedDoc: String!
+  place: String!
+  status: Status!
+  interviews: [Interview]!
+  score: Score
+}
+
+type RealInterview {
+  company: Company!
+  position: CompanyRole
+  date: Date!
+  user: User!
+}
+
+# The new schema
+type sInterview {
+  intervieweeUid_date: String
+  interviewerUid_date: String
+  room: String
+  docs: String
+}
