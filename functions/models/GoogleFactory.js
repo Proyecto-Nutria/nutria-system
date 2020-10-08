@@ -57,7 +57,7 @@ class DriveAPI extends Credentials {
     this.api.files.create({
       auth: super.getAuth,
       resource: fileMetadata,
-      media: media,
+      media: media, // TODO: Check if media can be {}
       fields: 'id'
     }, function (err, file) {
       if (err) {

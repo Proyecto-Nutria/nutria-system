@@ -10,8 +10,8 @@ const {
 
 const intervieweeResolver = {
   Mutation: {
-    createInterviewee: async (_parent, { file }, context) => {
-      const { stream, filename, mimetype, encoding } = await file
+    createInterviewee: async (_parent, { interviewee }, context) => {
+      const { stream, filename, mimetype, encoding } = await interviewee.resume
       const driveAPI = new GoogleFactory(DRIVE_API)
       driveAPI.uploadPDF('resume.pdf', PDF_TYPE, stream)
 

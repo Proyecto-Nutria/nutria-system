@@ -15,7 +15,7 @@ const query = gql`
     createInterviewer(interviewer: InterviewerInput): String,
     # Interviewee
     # createInterviewee(interviewee: IntervieweeInput): String,
-    createInterviewee(file: Upload!): String,
+    createInterviewee(interviewee: IntervieweeInput): String,
     # Interview
     createInterview(interview: InterviewInput): String,
     confirmInterview(interview: InterviewInput): String,
