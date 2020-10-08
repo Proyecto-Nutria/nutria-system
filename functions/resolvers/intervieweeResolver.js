@@ -1,52 +1,19 @@
-const { SingletonAdmin } = require('../models')
+const {
+  SingletonAdmin,
+  GoogleFactory,
+  DRIVE_API,
+  PDF_TYPE
+} = require('../models')
 const {
   INTERVIEWEE_REF
 } = require('./constants')
-
-const { google } = require('googleapis')
-const OAuth2 = google.auth.OAuth2
-const googleDrive = google.drive({ version: 'v3' })
-const googleCredentials = require('../config/google-credentials.json')
 
 const intervieweeResolver = {
   Mutation: {
     createInterviewee: async (_parent, { file }, context) => {
       const { stream, filename, mimetype, encoding } = await file
-
-      // TODO: Create a method to create the instance of each google api
-
-      const oAuth2Client = new OAuth2(
-        googleCredentials.web.client_id,
-        googleCredentials.web.client_secret,
-        googleCredentials.web.redirect_uris[1]
-      )
-
-      oAuth2Client
-        .setCredentials({
-          refresh_token: googleCredentials.docs_drive_refresh_token
-        })
-
-      var fileMetadata = {
-        name: 'resume.pdf'
-      }
-      var media = {
-        mimeType: 'application/pdf',
-        body: stream
-      }
-
-      googleDrive.files.create({
-        auth: oAuth2Client,
-        resource: fileMetadata,
-        media: media,
-        fields: 'id'
-      }, function (err, file) {
-        if (err) {
-          // Handle error
-          console.error(err)
-        } else {
-          console.log('File Id: ', file.data.id)
-        }
-      })
+      const driveAPI = new GoogleFactory(DRIVE_API)
+      driveAPI.uploadPDF('resume.pdf', PDF_TYPE, stream)
 
       /*
       const intervieweeUid = context.uid
