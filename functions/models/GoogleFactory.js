@@ -44,28 +44,41 @@ class DriveAPI extends Credentials {
     this.api = google.drive({ version: 'v3' })
   }
 
-  uploadPDF (fileName, type, data) {
-    var fileMetadata = {
-      name: fileName
+  async createResource (name, type, parentFolderId = null, data = null) {
+    if (parentFolderId === null) {
+      parentFolderId = googleCredentials.interview_folder_id
     }
 
-    var media = {
-      mimeType: type,
-      body: data
+    var metadata = {
+      name: name,
+      parents: [parentFolderId]
     }
+    var file = {}
 
-    this.api.files.create({
-      auth: super.getAuth,
-      resource: fileMetadata,
-      media: media, // TODO: Check if media can be {}
-      fields: 'id'
-    }, function (err, file) {
-      if (err) {
-        console.error(err)
-      } else {
-        console.log('File Id: ', file.data.id)
+    if (data === null) {
+      metadata.mimeType = type
+    } else {
+      file = {
+        mimeType: type,
+        body: data
       }
-    })
+    }
+
+    return await this
+      .api
+      .files
+      .create({
+        auth: super.getAuth,
+        resource: metadata,
+        media: file,
+        fields: 'id'
+      })
+      .then(value => {
+        return value.data.id
+      })
+      .catch((error) => {
+        console.error(error)
+      })
   }
 }
 
@@ -80,5 +93,6 @@ module.exports = {
   GoogleFactory,
   CALENDAR_API,
   DRIVE_API,
-  PDF_TYPE
+  PDF_TYPE,
+  FOLDER_TYPE
 }

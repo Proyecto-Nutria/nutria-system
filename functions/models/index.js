@@ -3,7 +3,8 @@ const {
   GoogleFactory,
   CALENDAR_API,
   DRIVE_API,
-  PDF_TYPE
+  PDF_TYPE,
+  FOLDER_TYPE
 } = require('./GoogleFactory')
 
 module.exports = {
@@ -11,5 +12,6 @@ module.exports = {
   GoogleFactory,
   CALENDAR_API,
   DRIVE_API,
-  PDF_TYPE
+  PDF_TYPE,
+  FOLDER_TYPE
 }
