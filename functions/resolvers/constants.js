@@ -6,6 +6,8 @@ module.exports = {
   USER_REF: 'users/',
   USER_ROLE_ATTR: 'role',
 
+  POOL_REF: 'pool/',
+
   INTERVIEW_REF: 'interviews/',
   INTERVIEW_INTERVIEWEE_UIDDATE: 'intervieweeUid_date',
   INTERVIEW_INTERVIEWER_UIDDATE: 'interviewerUid_date',

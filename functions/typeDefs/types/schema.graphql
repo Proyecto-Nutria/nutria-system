@@ -1,21 +1,5 @@
 scalar Date
 
-enum ProgrammingLanguage {
-  cpp
-  python
-  java
-  javascript
-  go
-  rust
-}
-
-enum School {
-  IPN
-  UNAM
-  CIMAT
-  NONLISTED
-}
-
 enum Company {
   Amazon
   Facebook
@@ -33,11 +17,13 @@ enum CompanyRole {
   FTE
 }
 
-enum TypeOfInterview {
-  se # Software Engineer
-  ml # Machine Learning
-  re # Reliability Engineering
-  ds # Data science
+enum ProgrammingLanguage {
+  cpp
+  python
+  java
+  javascript
+  go
+  rust
 }
 
 enum Role {
@@ -46,11 +32,25 @@ enum Role {
   interviewer
 }
 
+enum School {
+  IPN
+  UNAM
+  CIMAT
+  NONLISTED
+}
+
 enum Score {
   no_hire
   undetermined
   hire
   strongly_hire
+}
+
+enum TypeOfInterview {
+  se # Software Engineer
+  ml # Machine Learning
+  re # Reliability Engineering
+  ds # Data science
 }
 
 ## Inputs are for receiving information from the client
@@ -65,17 +65,19 @@ input InterviewerInput {
   description: String
 }
 
+input IntervalInput {
+  day: String!
+  interval: [String!]!
+}
+
 input PoolInput {
-  intervieweeUid: String!
-  priority: Int! # TODO: Create the algorithm to create the score
-  programmingLanguage: [ProgrammingLanguage]!
-  roleApplyingTo: CompanyRole
-  typesOfInterview: TypeOfInterview!
-  companiesApplyingTo: [Company]!
-  numberOfInterviews: Int!
-  # TODO: See how we're going to deal with the ranges
+  companies: [Company]!
+  interval: [IntervalInput]! #TODO: Change this in the back to put the day as key
+  language: [ProgrammingLanguage]!
+  pending: Int!
+  role: CompanyRole
+  type: TypeOfInterview!
   # TODO: Erase the range when an interview is scheduled to avoid problems
-  availability: [Date]!
 }
 
 input InterviewInput {
