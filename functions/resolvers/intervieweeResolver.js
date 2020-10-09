@@ -32,14 +32,13 @@ const intervieweeResolver = {
       preferences.uid = context.uid
       preferences.priority = 10
       const intervals = preferences.interval
-      preferences.all = []
+      preferences.availability = {}
       for (var interval of intervals) {
         const intervalDay = interval.day
-        preferences.all[intervalDay] = interval.interval
+        preferences.availability[intervalDay] = interval.interval
       }
       delete preferences.interval
-      // console.log(preferences.interval)
-      // poolRef.push(JSON.parse(JSON.stringify(preferences)))
+      poolRef.push(JSON.parse(JSON.stringify(preferences)))
 
       return 'Person inserted into the pool'
     }
