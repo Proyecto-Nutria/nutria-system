@@ -13,18 +13,16 @@ const intervieweeResolver = {
   Mutation: {
     createInterviewee: async (_parent, { interviewee }, context) => {
       const { stream, filename, mimetype, encoding } = await interviewee.resume
-      const driveAPI = new GoogleFactory(DRIVE_API)
-      const intervieweeFolderId = await driveAPI.createResource('PersonFolder', FOLDER_TYPE)
-      const intervieweeResumeId = await driveAPI.createResource('resume.pdf', PDF_TYPE, intervieweeFolderId, stream)
-      console.log(intervieweeResumeId)
-
-      /*
       const intervieweeUid = context.uid
+      const driveAPI = new GoogleFactory(DRIVE_API)
+      const intervieweeFolderId = await driveAPI.createResource(intervieweeUid, FOLDER_TYPE)
+      await driveAPI.createResource('resume.pdf', PDF_TYPE, intervieweeFolderId, stream)
       const intervieweeRef = SingletonAdmin.GetInstance().database().ref(INTERVIEWEE_REF)
 
       interviewee.uid = intervieweeUid
+      interviewee.folderUid = intervieweeFolderId
       // Set will overwrite the data at the specified location
-      intervieweeRef.child(intervieweeUid).set(JSON.parse(JSON.stringify(interviewee))) */
+      intervieweeRef.child(intervieweeUid).set(JSON.parse(JSON.stringify(interviewee)))
 
       return 'Inserted Into Database'
     }
