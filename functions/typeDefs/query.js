@@ -10,18 +10,17 @@ const query = gql`
     getAllInterviewees: [User]
   }
   type Mutation{
-    setMessage(message: String): String,
     # Interviewer
     createInterviewer(interviewer: InterviewerInput): String,
     # Interviewee
-    # createInterviewee(interviewee: IntervieweeInput): String,
     createInterviewee(interviewee: IntervieweeInput): String,
-    enterToPool(preferences: PoolInput): String, 
+    enterToPool(preferences: PoolInput): String,
     # Interview
     createInterview(interview: InterviewInput): String,
     confirmInterview(interview: InterviewInput): String,
+    cancelInterview(interviewId: String!): String,
     # Invitation
-    createInvitation(email: String): String
+    createInvitation(email: String!): String
   }
 `
 

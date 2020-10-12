@@ -109,6 +109,7 @@ type Interviewer {
 }
 
 type Interview {
+  uid: String!
   intervieweeUid_date: String!
   interviewerUid_date: String!
   date: Date!

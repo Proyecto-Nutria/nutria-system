@@ -30,14 +30,37 @@ const interviewResolvers = {
         .startAt(`${context.uid}_${Date.now()}`)
         .once(FIREBASE_VAL)
         .then(snap => snap.val())
-        .then(val => Object.keys(val).map(key => val[key]))
+        .then(val => Object.keys(val).map(key => {
+          val[key].uid = key
+          return val[key]
+        }))
     }
   },
   Mutation: {
     createInterview: (_, { interview }) => {
       const userRef = SingletonAdmin.GetInstance().database().ref(INTERVIEW_REF)
-      userRef.push(JSON.parse(JSON.stringify(interview)))
+      userRef
+        .push(
+          JSON.parse(
+            JSON.stringify(interview)
+          )
+        )
       return 'Inserted Into Database'
+    },
+    // TODO: Document all the Mutations and the Querys, JSDoc is an option
+    // TODO: Create the template and send and email
+    /**
+     * @param interview {Object} The request.
+     * @return {String}
+    */
+    cancelInterview: (_, { interviewId }) => {
+      SingletonAdmin
+        .GetInstance()
+        .database()
+        .ref(INTERVIEW_REF)
+        .child(interviewId)
+        .remove()
+      return 'Interview Canceled'
     },
     confirmInterview: async (_, { interview }) => {
       // Confirm the interview in the database
