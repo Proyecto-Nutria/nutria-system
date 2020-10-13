@@ -86,6 +86,12 @@ input InterviewInput {
   date: Date!
 }
 
+input ConfirmationInput {
+  interviewUid: String!
+  intervieweeUid: String!
+  interviewDate: String!
+}
+
 ## Types are for querying the information
 
 type User {

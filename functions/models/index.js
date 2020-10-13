@@ -1,4 +1,5 @@
 const { SingletonAdmin } = require('./SingletonAdmin')
+const { FirebaseAdmin } = require('./FirebaseAdmin')
 
 const {
   GoogleFactory,
@@ -25,5 +26,6 @@ module.exports = {
   DOC_TYPE,
   EmailFactory,
   CONFIRMATION_EMAIL,
-  CANCELLATION_EMAIL
+  CANCELLATION_EMAIL,
+  FirebaseAdmin
 }

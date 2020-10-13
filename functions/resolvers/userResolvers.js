@@ -21,6 +21,7 @@ const userResolvers = {
           if (snap.exists()) return [snap.val().role, false]
           const userRef = databaseInstance.database().ref(USER_REF)
           const invitationRef = databaseInstance.database().ref(INVITATION_REF)
+          // TODO: Use the Firebase static method to get the email
           return admin.auth().getUser(context.uid)
             .then(userRecord => {
               return invitationRef

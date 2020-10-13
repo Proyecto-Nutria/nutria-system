@@ -1,4 +1,3 @@
-
 const {
   GoogleFactory,
   CALENDAR_API,
@@ -6,7 +5,8 @@ const {
   DOC_TYPE,
   EmailFactory,
   CONFIRMATION_EMAIL,
-  SingletonAdmin
+  SingletonAdmin,
+  FirebaseAdmin
 } = require('../models')
 
 const {
@@ -58,9 +58,9 @@ const interviewResolvers = {
         .remove()
       return 'Interview Canceled'
     },
-    confirmInterview: async (_, { interviewUid, interviewDate }, context) => {
+    confirmInterview: async (_, { confirmation }, context) => {
       const roomRef = SingletonAdmin.GetInstance().database().ref(ROOM_REF)
-      const date = new Date(Number(interviewDate))
+      const date = new Date(Number(confirmation.interviewDate))
       const day = date.getDate()
       const month = date.getMonth() + 1 // returns 1 less than month
       const year = date.getFullYear().toString().slice(-2)
@@ -134,15 +134,15 @@ const interviewResolvers = {
       // Step 3: Update the status of the interview
       const interviewRef = SingletonAdmin.GetInstance().database().ref(INTERVIEW_REF)
       interviewRef
-        .child(interviewUid)
+        .child(confirmation.interviewUid)
         .update({ confirmed: true })
 
       // Step 4: Create the event in the calendar
-      // TODO: Get the email of the interviewers
       // Note: Be careful, this may be a production service it means that people want to
       // avoid because local testing is meant to be hermetic
+      const interviewerEmail = (await FirebaseAdmin.getAuthInformationFrom(context.uid)).email
       const calendarAPI = new GoogleFactory(CALENDAR_API)
-      calendarAPI.createEvent(possibleRoom, interviewDate)
+      calendarAPI.createEvent(possibleRoom, confirmation.interviewDate, interviewerEmail)
 
       // Step 5: Search interviewee's google folder and create a new google doc
       const driveAPI = new GoogleFactory(DRIVE_API)
@@ -157,8 +157,9 @@ const interviewResolvers = {
 
       // Step 7: Send the email to the final user with all the information
       const confirmationEmail = new EmailFactory(CONFIRMATION_EMAIL)
+      const intervieweeEmail = (await FirebaseAdmin.getAuthInformationFrom(confirmation.intervieweeUid)).email
       confirmationEmail.sendEmailUsing(
-        'reyesfragosoroberto@gmail.com',
+        intervieweeEmail,
         possibleRoom,
         interviewDateFormat,
         interviewBeginning,

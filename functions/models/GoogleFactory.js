@@ -36,7 +36,7 @@ class CalendarAPI extends Credentials {
     this.api = google.calendar({ version: 'v3' })
   }
 
-  async createEvent (roomNumber, initialDate) {
+  async createEvent (roomNumber, initialDate, interviewerEmail) {
     const twoHoursInTimestamp = 7200000
     const initialNumberDate = Number(initialDate)
     const eventData = {
@@ -49,11 +49,10 @@ class CalendarAPI extends Credentials {
       end: {
         dateTime: new Date(initialNumberDate + twoHoursInTimestamp),
         timeZone: 'EST'
-      }
-      /*,
+      },
       attendees: [
-        { email: 'lpage@example.com' }
-      ] */
+        { email: interviewerEmail }
+      ]
     }
 
     return await this

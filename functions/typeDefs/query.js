@@ -17,7 +17,7 @@ const query = gql`
     enterToPool(preferences: PoolInput): String,
     # Interview
     createInterview(interview: InterviewInput): String,
-    confirmInterview(interviewUid: String!, interviewDate: String!): String,
+    confirmInterview(confirmation: ConfirmationInput): String,
     cancelInterview(interviewUid: String!): String,
     # Invitation
     createInvitation(email: String!): String
