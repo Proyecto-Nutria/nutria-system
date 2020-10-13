@@ -1,7 +1,11 @@
 const fs = require('fs')
 const path = require('path')
 
-const { SingletonAdmin } = require('../models')
+const {
+  GoogleFactory,
+  CALENDAR_API,
+  SingletonAdmin
+} = require('../models')
 const {
   FIREBASE_VAL,
   ROOM_REF,
@@ -41,9 +45,7 @@ const interviewResolvers = {
       const userRef = SingletonAdmin.GetInstance().database().ref(INTERVIEW_REF)
       userRef
         .push(
-          JSON.parse(
-            JSON.stringify(interview)
-          )
+          JSON.parse(JSON.stringify(interview))
         )
       return 'Inserted Into Database'
     },
@@ -53,105 +55,101 @@ const interviewResolvers = {
      * @param interview {Object} The request.
      * @return {String}
     */
-    cancelInterview: (_, { interviewId }) => {
+    cancelInterview: (_, { interviewUid }) => {
       SingletonAdmin
         .GetInstance()
         .database()
         .ref(INTERVIEW_REF)
-        .child(interviewId)
+        .child(interviewUid)
         .remove()
       return 'Interview Canceled'
     },
-    confirmInterview: async (_, { interview }) => {
-      // Confirm the interview in the database
-      /*
-      const interviewRef = SingletonAdmin
-        .GetInstance()
-        .database()
-        .ref('interviews/' + interview.id)
+    confirmInterview: async (_, { interviewUid, interviewDate }) => {
+      const roomRef = SingletonAdmin.GetInstance().database().ref(ROOM_REF)
 
-      interviewRef
-        .update({ status: 'confirmed' }) */
+      // Step 1: Find an available room
+      const date = new Date(Number(interviewDate))
+      const day = date.getDate()
+      const month = date.getMonth() + 1 // returns 1 less than month
+      const year = date.getFullYear().toString().slice(-2)
+      const interviewDateFormat = `${day}-${month}-${year}`
+      const interviewBeginning = date.getHours()
+      const interviewEnding = interviewBeginning + 2
 
-      SingletonAdmin
-        .GetInstance()
-        .database()
-        .ref(ROOM_REF)
-        .orderByChild('20dec20' + ROOM_DATE_ATTR)
-        .equalTo('20dec20')
+      const { emptySnap, undefinedRoom, possibleRoom, prevIntervals } = await roomRef
+        // Sub filter by date of all rooms
+        .orderByChild(interviewDateFormat + ROOM_DATE_ATTR)
+        .equalTo(interviewDateFormat)
         .once(FIREBASE_VAL)
-        .then(snap => {
-          const userBHour = 1
-          const userEHour = 3
+        .then(snap => snap.val())
+        .then(val => {
+          var undefinedRoom = false
+          if (val === null) return { emptySnap: true, undefinedRoom: undefinedRoom, possibleRoom: 1, prevIntervals: [] }
+
           var possibleRoom = 1
-          const allIntervals = snap.val()
-          const currentDate = '20dec20'
+          var prevIntervals = []
           var currentRoomNumber
-          for (currentRoomNumber = 1; currentRoomNumber <= 1; currentRoomNumber++) {
-            const currentRoom = 'room' + currentRoomNumber
-            const intervals = allIntervals[currentRoom][currentDate].intervals
-            console.log(intervals)
+          for (currentRoomNumber = 1; currentRoomNumber <= 10; currentRoomNumber++) {
+            const currentRoom = val[currentRoomNumber]
+            if (typeof currentRoom === 'undefined') {
+              undefinedRoom = true
+              break
+            }
+            var roomFound = true
+            const intervals = currentRoom[interviewDateFormat].intervals
+
             for (const interval of intervals) {
               const cleanedInterval = interval.split('-')
-
-              if ((userBHour > cleanedInterval[0] && userBHour < cleanedInterval[1]) ||
-              (userEHour > cleanedInterval[0] && userEHour < cleanedInterval[1])) {
+              const intervalBeginning = cleanedInterval[0]
+              const intervalEnding = cleanedInterval[1]
+              if (
+                (interviewBeginning > intervalBeginning && interviewBeginning < intervalEnding) ||
+                (interviewEnding > intervalBeginning && interviewEnding < intervalEnding) ||
+                (interviewEnding === intervalBeginning && interviewEnding === intervalEnding)
+              ) {
                 possibleRoom += 1
+                roomFound = false
                 break
               }
             }
-            break
+            prevIntervals = intervals
+            if (roomFound === true) break
           }
-
-          console.log('Room will be' + possibleRoom)
-        })
-        // .then(val => console.log(Object.keys(val).map(key => val[key])))
-        // .then(val => console.log(val))
-
-      // TODO:- Select a room
-      // TODO: - Change the refresh token to use all the permission needed
-      // instead of multiple refresh tokens
-      // TODO: Catch errors coming from Google API
-      const oAuth2Client = new OAuth2(
-        googleCredentials.web.client_id,
-        googleCredentials.web.client_secret,
-        googleCredentials.web.redirect_uris[1]
-      )
-
-      oAuth2Client
-        .setCredentials({
-          refresh_token: googleCredentials.docs_drive_refresh_token
+          return { emptySnap: false, undefinedRoom: undefinedRoom, possibleRoom: possibleRoom, prevIntervals: prevIntervals }
         })
 
-      const eventData = {
-        eventName: 'Firebase testing',
-        description: 'Test',
-        starTime: new Date(),
-        endTime: new Date()
+      // Step 2: Add the new interval to the room
+      const intervalFormat = `${interviewBeginning}-${interviewEnding}`
+      if (emptySnap === true || undefinedRoom === true) {
+        roomRef.child(possibleRoom).child(interviewDateFormat).set(
+          {
+            date: interviewDateFormat,
+            intervals: [intervalFormat]
+          }
+        )
+      } else {
+        const updatedIntervals = [
+          ...prevIntervals,
+          intervalFormat
+        ]
+        // Note: Firebase 'ArrayUnionTransform' wasn't working properly
+        roomRef.child(possibleRoom).child(interviewDateFormat).update({
+          intervals: updatedIntervals
+        })
       }
 
-      // Create the event for the interviewer
-      /*
-      googleCalendar
-        .events
-        .insert({
-          auth: oAuth2Client,
-          calendarId: 'primary',
-          resource: {
-            summary: eventData.eventName,
-            start: {
-              dateTime: eventData.starTime,
-              timezone: 'EST'
-            },
-            end: {
-              dateTime: eventData.starTime,
-              timezone: 'EST'
-            }
-          }
-        })
-        .catch((error) => {
-          console.error(error)
-        }) */
+      // Step 3: Update the status of the interview
+      const interviewRef = SingletonAdmin.GetInstance().database().ref(INTERVIEW_REF)
+      interviewRef
+        .child(interviewUid)
+        .update({ confirmed: true })
+
+      // Step 4: Create the event in the calendar
+      // TODO: Get the email of the interviewers
+      const driveAPI = new GoogleFactory(CALENDAR_API)
+      driveAPI.createEvent(possibleRoom, interviewDate)
+
+      // Step 5: Create the docs in the user's folder
 
       // Get the folder id where the doc is going to be
       /*

@@ -36,6 +36,38 @@ class CalendarAPI extends Credentials {
     super()
     this.api = google.calendar({ version: 'v3' })
   }
+
+  async createEvent (roomNumber, initialDate) {
+    const twoHoursInTimestamp = 7200000
+    const eventData = {
+      summary: 'Nutria Interview',
+      location: `room ${roomNumber}`,
+      start: {
+        dateTime: initialDate,
+        timeZone: 'EST'
+      },
+      end: {
+        dateTime: new Date(Number(initialDate) + twoHoursInTimestamp),
+        timeZone: 'EST'
+      }
+      /*,
+      attendees: [
+        { email: 'lpage@example.com' }
+      ] */
+    }
+
+    return await this
+      .api
+      .events
+      .insert({
+        auth: super.getAuth,
+        calendarId: 'primary',
+        resource: eventData
+      })
+      .catch((error) => {
+        console.error(error)
+      })
+  }
 }
 
 class DriveAPI extends Credentials {
