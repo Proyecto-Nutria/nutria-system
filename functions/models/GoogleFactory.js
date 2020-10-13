@@ -17,7 +17,6 @@ class Credentials {
     )
   }
 
-  // TODO: Create an unified refresh token
   _setRefreshToken () {
     this._oAuth2Client
       .setCredentials({
@@ -112,6 +111,48 @@ class DriveAPI extends Credentials {
         console.error(error)
       })
   }
+
+  async getFolderId (name) {
+    return await this
+      .api
+      .files
+      .list({
+        auth: super.getAuth,
+        q: `mimeType='application/vnd.google-apps.folder' and name='${name}'`,
+        fields: 'nextPageToken, files(id, name)',
+        spaces: 'drive',
+        pageToken: null
+      })
+      .then(value => {
+        const folderInformation = value.data.files
+        if (folderInformation === undefined || folderInformation.length === 0) {
+          return ''
+        }
+        return folderInformation[0].id
+      })
+      .catch((error) => {
+        console.error(error)
+      })
+  }
+
+  changePermissionsOf (resourceId) {
+    this
+      .api
+      .permissions
+      .create(
+        {
+          auth: super.getAuth,
+          fields: 'id',
+          fileId: resourceId,
+          resource: {
+            type: 'anyone',
+            role: 'writer'
+          }
+        }
+      ).catch((error) => {
+        console.error(error)
+      })
+  }
 }
 
 class GoogleFactory {
@@ -126,5 +167,6 @@ module.exports = {
   CALENDAR_API,
   DRIVE_API,
   PDF_TYPE,
-  FOLDER_TYPE
+  FOLDER_TYPE,
+  DOC_TYPE
 }

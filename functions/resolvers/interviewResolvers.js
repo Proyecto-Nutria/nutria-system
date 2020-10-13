@@ -4,8 +4,11 @@ const path = require('path')
 const {
   GoogleFactory,
   CALENDAR_API,
+  DRIVE_API,
+  DOC_TYPE,
   SingletonAdmin
 } = require('../models')
+
 const {
   FIREBASE_VAL,
   ROOM_REF,
@@ -16,12 +19,7 @@ const {
 
 const sgMail = require('@sendgrid/mail')
 const sendgridCredentials = require('../config/sendgrid-credentials.json')
-
-const { google } = require('googleapis')
-const OAuth2 = google.auth.OAuth2
-const googleCalendar = google.calendar({ version: 'v3' })
-const googleDrive = google.drive({ version: 'v3' })
-const googleCredentials = require('../config/google-credentials.json')
+const { drive } = require('googleapis/build/src/apis/drive')
 
 const interviewResolvers = {
   Query: {
@@ -64,10 +62,8 @@ const interviewResolvers = {
         .remove()
       return 'Interview Canceled'
     },
-    confirmInterview: async (_, { interviewUid, interviewDate }) => {
+    confirmInterview: async (_, { interviewUid, interviewDate }, context) => {
       const roomRef = SingletonAdmin.GetInstance().database().ref(ROOM_REF)
-
-      // Step 1: Find an available room
       const date = new Date(Number(interviewDate))
       const day = date.getDate()
       const month = date.getMonth() + 1 // returns 1 less than month
@@ -76,6 +72,7 @@ const interviewResolvers = {
       const interviewBeginning = date.getHours()
       const interviewEnding = interviewBeginning + 2
 
+      // Step 1: Find an available room
       const { emptySnap, undefinedRoom, possibleRoom, prevIntervals } = await roomRef
         // Sub filter by date of all rooms
         .orderByChild(interviewDateFormat + ROOM_DATE_ATTR)
@@ -100,12 +97,12 @@ const interviewResolvers = {
 
             for (const interval of intervals) {
               const cleanedInterval = interval.split('-')
-              const intervalBeginning = cleanedInterval[0]
-              const intervalEnding = cleanedInterval[1]
+              const intervalBeginning = parseInt(cleanedInterval[0], 10)
+              const intervalEnding = parseInt(cleanedInterval[1], 10)
               if (
                 (interviewBeginning > intervalBeginning && interviewBeginning < intervalEnding) ||
                 (interviewEnding > intervalBeginning && interviewEnding < intervalEnding) ||
-                (interviewEnding === intervalBeginning && interviewEnding === intervalEnding)
+                (interviewBeginning === intervalBeginning && interviewEnding === intervalEnding)
               ) {
                 possibleRoom += 1
                 roomFound = false
@@ -146,101 +143,24 @@ const interviewResolvers = {
 
       // Step 4: Create the event in the calendar
       // TODO: Get the email of the interviewers
-      const driveAPI = new GoogleFactory(CALENDAR_API)
-      driveAPI.createEvent(possibleRoom, interviewDate)
+      // Note: Be careful, this may be a production service it means that people want to
+      // avoid because local testing is meant to be hermetic
+      const calendarAPI = new GoogleFactory(CALENDAR_API)
+      calendarAPI.createEvent(possibleRoom, interviewDate)
 
-      // Step 5: Create the docs in the user's folder
-
-      // Get the folder id where the doc is going to be
-      /*
-      var folderId = await googleDrive
-        .files
-        .list({
-          auth: oAuth2Client,
-          q: "mimeType='application/vnd.google-apps.folder' and name='NutriPerson2'",
-          fields: 'nextPageToken, files(id, name)',
-          spaces: 'drive',
-          pageToken: null
-        })
-        .then(value => {
-          const folderInformation = value.data.files
-          if (folderInformation === undefined || folderInformation.length === 0) {
-            return ''
-          }
-          return folderInformation[0].id
-        })
-        .catch((error) => {
-          console.error(error)
-        }) */
-
-      // If the folder does not exist, create a new one
-      /*
-      if (folderId === '') {
-        const folderMetadata = {
-          name: 'DummyFolder',
-          parents: [googleCredentials.interview_folder_id],
-          mimeType: 'application/vnd.google-apps.folder'
-        }
-
-        folderId = await googleDrive
-          .files
-          .create({
-            auth: oAuth2Client,
-            fields: 'id',
-            resource: folderMetadata
-          })
-          .then(value => {
-            return value.data.id
-          })
-          .catch((error) => {
-            console.error(error)
-          })
-      } */
-
-      // Create the google docs inside the folder
-      /*
-      const fileMetadata = {
-        name: 'Interview Doc',
-        parents: [folderId],
-        mimeType: 'application/vnd.google-apps.document'
+      // Step 5: Search the google folder corresponding to that person and create a
+      // new google docs
+      const driveAPI = new GoogleFactory(DRIVE_API)
+      const intervieweeFolderId = await driveAPI.getFolderId(context.uid)
+      if (intervieweeFolderId === '') {
+        return 'Interviewee folder does not exist'
       }
 
-      const googleDocId = await googleDrive
-        .files
-        .create({
-          auth: oAuth2Client,
-          fields: 'id',
-          resource: fileMetadata
-        })
-        .then(value => {
-          return value.data.id
-        })
-        .catch((error) => {
-          console.error(error)
-        }) */
+      // Step 6: Create the google docs inside the folder and change its permissions
+      const docId = await driveAPI.createResource(`Interview ${interviewDateFormat}`, DOC_TYPE, intervieweeFolderId)
+      driveAPI.changePermissionsOf(docId)
 
-      // Change the permissions of the google doc
-      /*
-      googleDrive
-        .permissions
-        .create(
-          {
-            auth: oAuth2Client,
-            fields: 'id',
-            fileId: googleDocId,
-            resource: {
-              type: 'anyone',
-              role: 'writer'
-            }
-          }
-        ).catch((error) => {
-          console.error(error)
-        }) */
-
-      // Be careful, this may be a production service. Calendar
-      // it means that people want to avoid because local testing is meant to be hermetic
-
-      // Send the email to the user with the final information
+      // Step 7: Send the email to the final user with all the information
       /*
       const openFile = (filePath) => fs.readFileSync(path.resolve(__dirname, filePath), 'utf8')
       const header = openFile('../template/header.html')
