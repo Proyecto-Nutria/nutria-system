@@ -1,11 +1,11 @@
-const fs = require('fs')
-const path = require('path')
 
 const {
   GoogleFactory,
   CALENDAR_API,
   DRIVE_API,
   DOC_TYPE,
+  EmailFactory,
+  CONFIRMATION_EMAIL,
   SingletonAdmin
 } = require('../models')
 
@@ -16,10 +16,6 @@ const {
   INTERVIEW_REF,
   INTERVIEW_INTERVIEWEE_UIDDATE
 } = require('./constants')
-
-const sgMail = require('@sendgrid/mail')
-const sendgridCredentials = require('../config/sendgrid-credentials.json')
-const { drive } = require('googleapis/build/src/apis/drive')
 
 const interviewResolvers = {
   Query: {
@@ -148,8 +144,7 @@ const interviewResolvers = {
       const calendarAPI = new GoogleFactory(CALENDAR_API)
       calendarAPI.createEvent(possibleRoom, interviewDate)
 
-      // Step 5: Search the google folder corresponding to that person and create a
-      // new google docs
+      // Step 5: Search interviewee's google folder and create a new google doc
       const driveAPI = new GoogleFactory(DRIVE_API)
       const intervieweeFolderId = await driveAPI.getFolderId(context.uid)
       if (intervieweeFolderId === '') {
@@ -161,24 +156,13 @@ const interviewResolvers = {
       driveAPI.changePermissionsOf(docId)
 
       // Step 7: Send the email to the final user with all the information
-      /*
-      const openFile = (filePath) => fs.readFileSync(path.resolve(__dirname, filePath), 'utf8')
-      const header = openFile('../template/header.html')
-      const content = openFile('../template/content.html').replace('[[username]]', 'Nutria Name')
-      const footer = openFile('../template/footer.html')
-
-      sgMail.setApiKey(sendgridCredentials.api_key)
-      const msg = {
-        to: 'reyesfragosoroberto@gmail.com',
-        from: 'proyecto.nutria.escom@gmail.com',
-        subject: 'Interview Remainder', // TODO: Add day of the interview
-        html: header.concat(content, footer)
-      }
-      sgMail
-        .send(msg)
-        .catch((error) => {
-          console.error(error)
-        }) */
+      const confirmationEmail = new EmailFactory(CONFIRMATION_EMAIL)
+      confirmationEmail.sendEmailUsing(
+        'reyesfragosoroberto@gmail.com',
+        possibleRoom,
+        interviewDateFormat,
+        interviewBeginning,
+        docId)
 
       return 'Interview Confirmed'
     }

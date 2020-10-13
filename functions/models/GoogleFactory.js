@@ -38,15 +38,16 @@ class CalendarAPI extends Credentials {
 
   async createEvent (roomNumber, initialDate) {
     const twoHoursInTimestamp = 7200000
+    const initialNumberDate = Number(initialDate)
     const eventData = {
       summary: 'Nutria Interview',
       location: `room ${roomNumber}`,
       start: {
-        dateTime: initialDate,
+        dateTime: new Date(initialNumberDate),
         timeZone: 'EST'
       },
       end: {
-        dateTime: new Date(Number(initialDate) + twoHoursInTimestamp),
+        dateTime: new Date(initialNumberDate + twoHoursInTimestamp),
         timeZone: 'EST'
       }
       /*,

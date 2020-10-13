@@ -1,4 +1,5 @@
 const { SingletonAdmin } = require('./SingletonAdmin')
+
 const {
   GoogleFactory,
   CALENDAR_API,
@@ -8,6 +9,12 @@ const {
   DOC_TYPE
 } = require('./GoogleFactory')
 
+const {
+  EmailFactory,
+  CONFIRMATION_EMAIL,
+  CANCELLATION_EMAIL
+} = require('./EmailFactory')
+
 module.exports = {
   SingletonAdmin,
   GoogleFactory,
@@ -15,5 +22,8 @@ module.exports = {
   DRIVE_API,
   PDF_TYPE,
   FOLDER_TYPE,
-  DOC_TYPE
+  DOC_TYPE,
+  EmailFactory,
+  CONFIRMATION_EMAIL,
+  CANCELLATION_EMAIL
 }

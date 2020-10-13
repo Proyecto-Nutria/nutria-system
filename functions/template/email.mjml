@@ -10,7 +10,7 @@
   <mj-body>
     <mj-section>
       <mj-column width="100%">
-        <mj-image href="https://recast.ai?ref=newsletter" src="https://raw.githubusercontent.com/Proyecto-Nutria/nutria-system/goberinfinity/nutria-email/functions/template/images/nutria_header.png"></mj-image>
+        <mj-image src="https://raw.githubusercontent.com/Proyecto-Nutria/nutria-system/goberinfinity/nutria-email/functions/template/images/nutria_header.png"></mj-image>
       </mj-column>
     </mj-section>
     <mj-section>
