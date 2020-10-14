@@ -3,6 +3,7 @@ const {
   CALENDAR_API,
   DRIVE_API,
   DOC_TYPE,
+  FOLDER_TYPE,
   EmailFactory,
   CONFIRMATION_EMAIL,
   CANCELLATION_EMAIL,
@@ -151,7 +152,7 @@ const interviewResolvers = {
 
       // Step 5: Search interviewee's google folder and create a new google doc
       const driveAPI = new GoogleFactory(DRIVE_API)
-      const intervieweeFolderId = await driveAPI.getFolderId(context.uid)
+      const intervieweeFolderId = await driveAPI.getResourceId(FOLDER_TYPE, context.uid)
       if (intervieweeFolderId === '') {
         return 'Interviewee folder does not exist'
       }

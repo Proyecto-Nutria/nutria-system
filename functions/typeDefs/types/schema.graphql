@@ -56,8 +56,13 @@ enum TypeOfInterview {
 ## Inputs are for receiving information from the client
 
 input IntervieweeInput {
-  school: School
+  school: School!
   resume: Upload!
+}
+
+input IntervieweeUpdateInput {
+  school: School
+  resume: Upload
 }
 
 input InterviewerInput {

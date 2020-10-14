@@ -1,3 +1,5 @@
+var fs = require('fs')
+
 const {
   SingletonAdmin,
   GoogleFactory,
@@ -13,7 +15,7 @@ const {
 const intervieweeResolver = {
   Mutation: {
     createInterviewee: async (_parent, { interviewee }, context) => {
-      const { stream, _filename, _mimetype, _encoding } = await interviewee.resume
+      const { stream } = await interviewee.resume
       const intervieweeUid = context.uid
       const driveAPI = new GoogleFactory(DRIVE_API)
       const intervieweeFolderId = await driveAPI.createResource(intervieweeUid, FOLDER_TYPE)
@@ -26,6 +28,22 @@ const intervieweeResolver = {
       intervieweeRef.child(intervieweeUid).set(JSON.parse(JSON.stringify(interviewee)))
 
       return 'Inserted Into Database'
+    },
+    updateInterviewee: async (_parent, { interviewee }, context) => {
+      const intervieweeUid = context.uid
+
+      if (typeof (interviewee.resume) !== 'undefined') {
+        const { stream } = await interviewee.resume
+        const driveAPI = new GoogleFactory(DRIVE_API)
+        const intervieweeFolderId = await driveAPI.getResourceId(FOLDER_TYPE, context.uid)
+        const intervieweeResumeId = await driveAPI.getResourceId(PDF_TYPE, 'resume.pdf')
+        await driveAPI.deleteResource(intervieweeResumeId)
+        await driveAPI.createResource('resume.pdf', PDF_TYPE, intervieweeFolderId, stream)
+      }
+
+      const interviewerRef = SingletonAdmin.GetInstance().database().ref(INTERVIEWEE_REF)
+      interviewerRef.child(intervieweeUid).update(JSON.parse(JSON.stringify(interviewee)))
+      return 'Interviewee Updated'
     },
     enterToPool: (_parent, { preferences }, context) => {
       const poolRef = SingletonAdmin.GetInstance().database().ref(POOL_REF)

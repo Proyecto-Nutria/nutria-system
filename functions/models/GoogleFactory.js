@@ -112,13 +112,13 @@ class DriveAPI extends Credentials {
       })
   }
 
-  async getFolderId (name) {
+  async getResourceId (resource, name) {
     return await this
       .api
       .files
       .list({
         auth: super.getAuth,
-        q: `mimeType='application/vnd.google-apps.folder' and name='${name}'`,
+        q: `mimeType='${resource}' and name='${name}'`,
         fields: 'nextPageToken, files(id, name)',
         spaces: 'drive',
         pageToken: null
@@ -132,6 +132,16 @@ class DriveAPI extends Credentials {
       })
       .catch((error) => {
         console.error(error)
+      })
+  }
+
+  async deleteResource (id) {
+    return await this
+      .api
+      .files
+      .delete({
+        auth: super.getAuth,
+        fileId: id
       })
   }
 

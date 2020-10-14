@@ -15,6 +15,7 @@ const query = gql`
     updateInterviewer(interviewer: InterviewerInput): String,
     # Interviewee
     createInterviewee(interviewee: IntervieweeInput): String,
+    updateInterviewee(interviewee: IntervieweeUpdateInput): String,
     enterToPool(preferences: PoolInput): String,
     # Interview
     createInterview(interview: InterviewInput): String,
