@@ -5,6 +5,7 @@ const {
   DOC_TYPE,
   EmailFactory,
   CONFIRMATION_EMAIL,
+  CANCELLATION_EMAIL,
   SingletonAdmin,
   FirebaseAdmin
 } = require('../models')
@@ -44,29 +45,33 @@ const interviewResolvers = {
       return 'Inserted Into Database'
     },
     // TODO: Document all the Mutations and the Querys, JSDoc is an option
-    // TODO: Create the template and send and email
     /**
      * @param interview {Object} The request.
      * @return {String}
     */
-    cancelInterview: (_, { interviewUid }) => {
+    cancelInterview: async (_, { cancellation }) => {
+      const { interviewDateFormat, interviewBeginning } = timestampToDate(cancellation.interviewDate)
+
       SingletonAdmin
         .GetInstance()
         .database()
         .ref(INTERVIEW_REF)
-        .child(interviewUid)
+        .child(cancellation.interviewUid)
         .remove()
+
+      const confirmationEmail = new EmailFactory(CANCELLATION_EMAIL)
+      const intervieweeEmail = (await FirebaseAdmin.getAuthInformationFrom(cancellation.interviewerUid)).email
+      confirmationEmail.sendEmailUsing(
+        intervieweeEmail,
+        interviewDateFormat,
+        interviewBeginning
+      )
+
       return 'Interview Canceled'
     },
     confirmInterview: async (_, { confirmation }, context) => {
       const roomRef = SingletonAdmin.GetInstance().database().ref(ROOM_REF)
-      const date = new Date(Number(confirmation.interviewDate))
-      const day = date.getDate()
-      const month = date.getMonth() + 1 // returns 1 less than month
-      const year = date.getFullYear().toString().slice(-2)
-      const interviewDateFormat = `${day}-${month}-${year}`
-      const interviewBeginning = date.getHours()
-      const interviewEnding = interviewBeginning + 2
+      const { interviewDateFormat, interviewBeginning, interviewEnding } = timestampToDate(confirmation.interviewDate)
 
       // Step 1: Find an available room
       const { emptySnap, undefinedRoom, possibleRoom, prevIntervals } = await roomRef
@@ -167,6 +172,21 @@ const interviewResolvers = {
 
       return 'Interview Confirmed'
     }
+  }
+}
+
+function timestampToDate (timestamp) {
+  const date = new Date(Number(timestamp))
+  const day = date.getDate()
+  const month = date.getMonth() + 1 // returns 1 less than month
+  const year = date.getFullYear().toString().slice(-2)
+  const interviewDateFormat = `${day}-${month}-${year}`
+  const interviewBeginning = date.getHours()
+  const interviewEnding = interviewBeginning + 2
+  return {
+    interviewDateFormat: interviewDateFormat,
+    interviewBeginning: interviewBeginning,
+    interviewEnding: interviewEnding
   }
 }
 

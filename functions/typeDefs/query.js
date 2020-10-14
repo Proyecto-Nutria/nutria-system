@@ -19,7 +19,7 @@ const query = gql`
     # Interview
     createInterview(interview: InterviewInput): String,
     confirmInterview(confirmation: ConfirmationInput): String,
-    cancelInterview(interviewUid: String!): String,
+    cancelInterview(cancellation: CancellationInput): String,
     # Invitation
     createInvitation(email: String!): String
   }

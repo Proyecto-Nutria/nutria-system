@@ -72,7 +72,7 @@ input IntervalInput {
 
 input PoolInput {
   companies: [Company]!
-  interval: [IntervalInput]! #TODO: Change this in the back to put the day as key
+  interval: [IntervalInput]!
   language: [ProgrammingLanguage]!
   pending: Int!
   role: CompanyRole
@@ -89,6 +89,12 @@ input InterviewInput {
 input ConfirmationInput {
   interviewUid: String!
   intervieweeUid: String!
+  interviewDate: String!
+}
+
+input CancellationInput {
+  interviewUid: String!
+  interviewerUid: String!
   interviewDate: String!
 }
 

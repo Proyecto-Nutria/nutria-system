@@ -8,6 +8,7 @@ const sgMail = require('@sendgrid/mail')
 const sendgridCredentials = require('../config/sendgrid-credentials.json')
 
 const confirmationBody = require('../template/ConfirmationBody')
+const cancellationBody = require('../template/CancellationBody')
 const emailGeneralTemplate = require('../template/GeneralTemplate')
 
 class Email {
@@ -46,10 +47,20 @@ class ConfirmationEmail extends Email {
   }
 }
 
+class CancellationEmail extends Email {
+  sendEmailUsing (email, date, hour) {
+    this._to = email
+    this._subject = `Nutria Interview Cancellation on ${date}`
+    const body = cancellationBody(date, hour)
+    this._html = emailGeneralTemplate(body)
+    super.sendEmail()
+  }
+}
+
 class EmailFactory {
   constructor (type) {
     if (type === CONFIRMATION_EMAIL) { return new ConfirmationEmail() }
-    // if (type === CANCELLATION_EMAIL) { return new DriveAPI() }
+    if (type === CANCELLATION_EMAIL) { return new CancellationEmail() }
   }
 }
 
