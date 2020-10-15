@@ -5,7 +5,7 @@ const CONFIRMATION_EMAIL = 'confirmation'
 const CANCELLATION_EMAIL = 'cancellation'
 const NUTRIA_EMAIL = 'proyecto.nutria.escom@gmail.com'
 const sgMail = require('@sendgrid/mail')
-const sendgridCredentials = require('../config/sendgrid-credentials.json')
+const sendgridCredentials = require(process.env.SENDGRID_CREDENTIALS)
 
 const confirmationBody = require('../template/ConfirmationBody')
 const cancellationBody = require('../template/CancellationBody')
