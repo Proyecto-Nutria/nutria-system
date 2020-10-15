@@ -1,5 +1,6 @@
 const CALENDAR_API = 'calendar'
 const DRIVE_API = 'drive'
+const GMAIL_API = 'gmail'
 const PDF_TYPE = 'application/pdf'
 const DOC_TYPE = 'application/vnd.google-apps.document'
 const FOLDER_TYPE = 'application/vnd.google-apps.folder'
@@ -7,6 +8,12 @@ const FOLDER_TYPE = 'application/vnd.google-apps.folder'
 const { google } = require('googleapis')
 const OAuth2 = google.auth.OAuth2
 const googleCredentials = require(process.env.GOOGLE_APPLICATION_CREDENTIALS)
+
+const NUTRIA_EMAIL = 'proyecto.nutria.escom@gmail.com'
+const HTML_TYPE = 'Content-Type:text/html;charset=utf-8'
+const confirmationBody = require('../template/ConfirmationBody')
+const cancellationBody = require('../template/CancellationBody')
+const emailGeneralTemplate = require('../template/GeneralTemplate')
 
 class Credentials {
   constructor () {
@@ -165,16 +172,65 @@ class DriveAPI extends Credentials {
   }
 }
 
+class GmailAPI extends Credentials {
+  constructor () {
+    super()
+    this.api = google.gmail({ version: 'v1' })
+  }
+
+  async sendConfirmationEmail (to, room, date, hour, docId) {
+    const subject = `Nutria Interview at ${date}`
+    const googleDocUrl = `docs.google.com/document/d/${docId}`
+    const emailBody = confirmationBody(room, date, hour, googleDocUrl)
+    const emailTemplate = emailGeneralTemplate(emailBody)
+
+    await this._sendEmail(to, subject, emailTemplate)
+  }
+
+  async sendCancellationEmail (to, date, hour) {
+    const subject = `Cancellation of Nutria Interview on ${date}`
+    const emailBody = cancellationBody(date, hour)
+    const emailTemplate = emailGeneralTemplate(emailBody)
+
+    await this._sendEmail(to, subject, emailTemplate)
+  }
+
+  async _sendEmail (to, subject, emailTemplate) {
+    const from = `From:<${NUTRIA_EMAIL}>`
+    const emailTo = `To:<${to}>`
+    const emailSubject = `Subject:${subject}`
+    const buff = Buffer.from(`${from}\n${emailTo}\n${emailSubject}\n${HTML_TYPE}\n${emailTemplate}`)
+    const base64data = buff.toString('base64')
+
+    await this
+      .api
+      .users
+      .messages
+      .send(
+        {
+          auth: super.getAuth,
+          userId: 'me',
+          resource: { raw: base64data }
+        }
+      )
+      .catch((error) => {
+        console.error(error)
+      })
+  }
+}
+
 class GoogleFactory {
   constructor (type) {
     if (type === CALENDAR_API) { return new CalendarAPI() }
     if (type === DRIVE_API) { return new DriveAPI() }
+    if (type === GMAIL_API) { return new GmailAPI() }
   }
 }
 
 module.exports = {
   GoogleFactory,
   CALENDAR_API,
+  GMAIL_API,
   DRIVE_API,
   PDF_TYPE,
   FOLDER_TYPE,
