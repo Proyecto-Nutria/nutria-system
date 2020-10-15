@@ -3,7 +3,7 @@ var SingletonAdmin = (function () {
 
   function CreateInstance () {
     const firebaseAdmin = require('firebase-admin')
-    const serviceAccount = require(proccess.env.FIREBASE_ADMIN_CREDENTIALS)
+    const serviceAccount = require(process.env.FIREBASE_ADMIN_CREDENTIALS)
     firebaseAdmin.initializeApp({
       credential: firebaseAdmin.credential.cert(serviceAccount),
       databaseURL: 'https://nutria-system.firebaseio.com'
