@@ -29,18 +29,8 @@
 ```
 firebase serve
 ```
-### Setup credentials
 
-1. Create a `.env` file **inside** the `functions` folder then add the following variables
-
-```
-FIREBASE_ADMIN_CREDENTIALS=/path/to/firebase-credentials.json
-GOOGLE_APPLICATION_CREDENTIALS=/path/to/google_credentials.json 
-```
-
-### Continuous Deployment
-
-[Github Actions](https://github.com/Proyecto-Nutria/deploy-firebase-functions)
+Continuous Deployment thru our [Github Actions](https://github.com/Proyecto-Nutria/deploy-firebase-functions)
 
 ## Important Notes
 
