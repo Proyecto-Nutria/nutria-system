@@ -1,12 +1,10 @@
 const {
   GoogleFactory,
   CALENDAR_API,
+  GMAIL_API,
   DRIVE_API,
   DOC_TYPE,
   FOLDER_TYPE,
-  EmailFactory,
-  CONFIRMATION_EMAIL,
-  CANCELLATION_EMAIL,
   SingletonAdmin,
   FirebaseAdmin
 } = require('../models')
@@ -60,13 +58,12 @@ const interviewResolvers = {
         .child(cancellation.interviewUid)
         .remove()
 
-      const confirmationEmail = new EmailFactory(CANCELLATION_EMAIL)
       const intervieweeEmail = (await FirebaseAdmin.getAuthInformationFrom(cancellation.interviewerUid)).email
-      confirmationEmail.sendEmailUsing(
+      const gmailAPI = new GoogleFactory(GMAIL_API)
+      await gmailAPI.sendCancellationEmail(
         intervieweeEmail,
         interviewDateFormat,
-        interviewBeginning
-      )
+        interviewBeginning)
 
       return 'Interview Canceled'
     },
@@ -162,10 +159,9 @@ const interviewResolvers = {
       driveAPI.changePermissionsOf(docId)
 
       // Step 7: Send the email to the final user with all the information
-      const confirmationEmail = new EmailFactory(CONFIRMATION_EMAIL)
       const intervieweeEmail = (await FirebaseAdmin.getAuthInformationFrom(confirmation.intervieweeUid)).email
-      confirmationEmail.sendEmailUsing(
-        intervieweeEmail,
+      const gmailAPI = new GoogleFactory(GMAIL_API)
+      await gmailAPI.sendConfirmationEmail(intervieweeEmail,
         possibleRoom,
         interviewDateFormat,
         interviewBeginning,
