@@ -24,17 +24,25 @@
 
 ## Development
 
-1. You can test out your functions locally using:
+Test out your functions locally using:
 
 ```
 firebase serve
 ```
 
-Continuous Deployment thru our [Github Actions](https://github.com/Proyecto-Nutria/deploy-firebase-functions)
+## Deployment
+
+Deploy all the functions using:
+
+```
+firebase deploy
+```
+
+Remember to update the security rules in the webpage of the project using [Firebase's recommendations](https://firebase.google.com/docs/rules/basics#realtime-database) and the data indexes using [Firebase's guide](https://firebase.google.com/docs/database/security/indexing-data).
 
 ## Important Notes
 
-### 1. Commit Messages
+### Commit Messages
 
 Use the following rule to write your messages:
 
@@ -50,10 +58,10 @@ This commit will: Test the NutriaUser endpoint using jest
 
 Note: Remember to capitalize the first letter of the message.
 
-### 2. Tasks
+### Tasks
 
 All the available task are located inside the [board](https://github.com/Proyecto-Nutria/nutria-system/projects/1), remember to upload the status of your task to show others what has been done.
 
-### 3. Ignored files
+### Ignored files
 
 Please don't commit personal editor's configuration (e.g. .vscode), you shouldn't push your personal settings to the repo in order to not confuse other contributors.
