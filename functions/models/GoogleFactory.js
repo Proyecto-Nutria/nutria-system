@@ -7,7 +7,7 @@ const FOLDER_TYPE = 'application/vnd.google-apps.folder'
 
 const { google } = require('googleapis')
 const OAuth2 = google.auth.OAuth2
-const googleCredentials = require('../config/google-credentials.json')
+const googleCredentials = require(process.env.GOOGLE_APPLICATION_CREDENTIALS)
 
 const NUTRIA_EMAIL = 'proyecto.nutria.escom@gmail.com'
 const HTML_TYPE = 'Content-Type:text/html;charset=utf-8'
