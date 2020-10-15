@@ -36,7 +36,6 @@ firebase serve
 ```
 FIREBASE_ADMIN_CREDENTIALS=/path/to/firebase-credentials.json
 GOOGLE_APPLICATION_CREDENTIALS=/path/to/google_credentials.json 
-SENDGRID_CREDENTIALS=/path/to/sendgrid-credentials.json
 ```
 
 ### Continuous Deployment
