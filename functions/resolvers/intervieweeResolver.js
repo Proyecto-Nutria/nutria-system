@@ -6,8 +6,7 @@ const {
   FOLDER_TYPE
 } = require('../models')
 const {
-  INTERVIEWEE_REF,
-  POOL_REF
+  INTERVIEWEE_REF
 } = require('./constants')
 
 const intervieweeResolver = {
@@ -42,21 +41,6 @@ const intervieweeResolver = {
       const interviewerRef = SingletonAdmin.GetInstance().database().ref(INTERVIEWEE_REF)
       interviewerRef.child(intervieweeUid).update(JSON.parse(JSON.stringify(interviewee)))
       return 'Interviewee Updated'
-    },
-    enterToPool: (_parent, { preferences }, context) => {
-      const poolRef = SingletonAdmin.GetInstance().database().ref(POOL_REF)
-      preferences.uid = context.uid
-      preferences.priority = 10
-      const intervals = preferences.interval
-      preferences.availability = {}
-      for (var interval of intervals) {
-        const intervalDay = interval.day
-        preferences.availability[intervalDay] = interval.interval
-      }
-      delete preferences.interval
-      poolRef.push(JSON.parse(JSON.stringify(preferences)))
-
-      return 'Person inserted into the pool'
     }
   }
 }

@@ -4,19 +4,22 @@ const query = gql`
   type Query {
     # User
     getUserType: [String],
+    # Pool
+    viewPool: [Pool],
     # Interviews
     getIncomingInterviews: [Interview],
     # Interviewee
     getAllInterviewees: [User]
   }
   type Mutation{
+    #Pool
+    enterToPool(preferences: PoolInput): String,
     # Interviewer
     createInterviewer(interviewer: InterviewerInput): String,
     updateInterviewer(interviewer: InterviewerInput): String,
     # Interviewee
     createInterviewee(interviewee: IntervieweeInput): String,
     updateInterviewee(interviewee: IntervieweeUpdateInput): String,
-    enterToPool(preferences: PoolInput): String,
     # Interview
     createInterview(interview: InterviewInput): String,
     confirmInterview(confirmation: ConfirmationInput): String,

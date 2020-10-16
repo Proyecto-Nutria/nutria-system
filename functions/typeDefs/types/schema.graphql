@@ -77,7 +77,7 @@ input IntervalInput {
 
 input PoolInput {
   companies: [Company]!
-  interval: [IntervalInput]!
+  availability: [IntervalInput]!
   language: [ProgrammingLanguage]!
   pending: Int!
   role: CompanyRole
@@ -110,6 +110,21 @@ type User {
   email: String!
   name: String!
   role: [Role!]!
+}
+
+type Interval {
+  day: String!
+  interval: [String!]!
+}
+
+type Pool {
+  uid: String!
+  type: TypeOfInterview!
+  role: CompanyRole!
+  priority: Int!
+  language: [ProgrammingLanguage]!
+  companies: [Company]!
+  availability: [Interval]!
 }
 
 # TODO: See if it is necessary to join user with interviewee and interviewer
