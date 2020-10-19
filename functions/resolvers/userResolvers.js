@@ -1,5 +1,8 @@
 const admin = require('firebase-admin')
-const { SingletonAdmin } = require('../models')
+const {
+  SingletonAdmin,
+  FirebaseAdmin
+} = require('../models')
 const {
   FIREBASE_VAL,
   INTERVIEWEE_VAL,
@@ -21,8 +24,7 @@ const userResolvers = {
           if (snap.exists()) return [snap.val().role, false]
           const userRef = databaseInstance.database().ref(USER_REF)
           const invitationRef = databaseInstance.database().ref(INVITATION_REF)
-          // TODO: Use the Firebase static method to get the email
-          return admin.auth().getUser(context.uid)
+          return FirebaseAdmin.getAuthInformationFrom(context.uid)
             .then(userRecord => {
               return invitationRef
                 .orderByChild(INVITATION_EMAIL_ATTR)

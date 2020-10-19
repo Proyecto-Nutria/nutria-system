@@ -8,7 +8,7 @@ const { Readable } = require('stream')
 
 const app = express()
 
-// TODO: Check in the future is the native support for firebase is already in the library
+// TODO: Check in the future if the native support for firebase is already in apollo
 // The code below is necessary to be able to upload a file using firebase,
 // If you know that you'll just be dealing with small files, this isn't a serious concern.
 // - https://github.com/jaydenseric/graphql-upload/issues/129#issuecomment-449169753

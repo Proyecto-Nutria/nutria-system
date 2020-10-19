@@ -21,17 +21,6 @@ const poolResolver = {
       const poolRef = SingletonAdmin.GetInstance().database().ref(POOL_REF)
       preferences.uid = context.uid
       preferences.priority = 10
-
-      /*
-      const intervals = preferences.interval
-      preferences.availability = {}
-
-      for (var interval of intervals) {
-        const intervalDay = interval.day
-        preferences.availability[intervalDay] = interval.interval
-      } */
-
-      // delete preferences.interval
       poolRef.push(JSON.parse(JSON.stringify(preferences)))
 
       return 'Person inserted into the pool'
