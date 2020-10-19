@@ -11,6 +11,23 @@ const {
 
 const intervieweeResolver = {
   Mutation: {
+    /**
+     * Creates an interviewee and its corresponding google drive folder, the folder is
+     * used to put the resume of the interviewee and to store the docs for the future
+     * interviews
+     * @author interviewee
+     * @param {object} IntervieweeInput
+     * @example
+     * mutation($file: Upload!){
+     *   createInterviewee(
+     *     interviewee: {
+     *       resume: $file,
+     *       school: IPN
+     *     }
+     *   )
+     * }
+     * @return {String}
+     */
     createInterviewee: async (_parent, { interviewee }, context) => {
       const { stream } = await interviewee.resume
       const intervieweeUid = context.uid
@@ -26,6 +43,20 @@ const intervieweeResolver = {
 
       return 'Inserted Into Database'
     },
+    /**
+     * Updates the resume or the information of the interviewee
+     * @author interviewee
+     * @param {object} IntervieweeUpdateInput
+     * @example
+     * mutation( $file: Upload!){
+     *  updateInterviewee(
+     *    interviewee: {
+     *      resume: $file
+     *    }
+     *  )
+     * }
+     * @return {String}
+     */
     updateInterviewee: async (_parent, { interviewee }, context) => {
       const intervieweeUid = context.uid
 
