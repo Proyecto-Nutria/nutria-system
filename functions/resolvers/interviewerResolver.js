@@ -8,7 +8,7 @@ const interviewerResolver = {
     /**
      * Creates a new entry in the interviewers' tree
      * @author interviewer
-     * @param {object} InterviewerInput
+     * @param {object} String Email of the interviewer
      * @example
      * mutation {
      *   createInterviewer(

@@ -7,6 +7,18 @@ const {
 
 const invitationResolvers = {
   Mutation: {
+    /**
+     * Creates a new entry in the invitations' tree if the invitation was not yet created
+     * @author root
+     * @param {object} InterviewerInput
+     * @example
+     * mutation{
+     *   createInvitation(
+     *     email: "name@domain.com"
+     *   )
+     * }
+     * @return {String}
+     */
     createInvitation: (_parent, { email }) => {
       const invitationRef = SingletonAdmin
         .GetInstance()
@@ -20,7 +32,7 @@ const invitationResolvers = {
         .then(snap => {
           if (snap.exists()) {
             const invitation = snap.val()[Object.keys(snap.val())[0]]
-            if (invitation.used === true) return 'No invitation needed '
+            if (invitation.used === true) return 'No invitation needed'
             return 'Invitation set but user not registered yet'
           }
           invitationRef.push({
