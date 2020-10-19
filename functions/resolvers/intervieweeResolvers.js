@@ -9,7 +9,7 @@ const {
   INTERVIEWEE_REF
 } = require('./constants')
 
-const intervieweeResolver = {
+const intervieweeResolvers = {
   Mutation: {
     /**
      * Creates a new entry in the interviewees' tree and its corresponding google drive
@@ -77,5 +77,5 @@ const intervieweeResolver = {
 }
 
 module.exports = {
-  intervieweeResolver
+  intervieweeResolvers
 }

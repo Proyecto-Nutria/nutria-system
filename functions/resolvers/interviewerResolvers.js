@@ -3,7 +3,7 @@ const {
   INTERVIEWER_REF
 } = require('./constants')
 
-const interviewerResolver = {
+const interviewerResolvers = {
   Mutation: {
     /**
      * Creates a new entry in the interviewers' tree
@@ -54,5 +54,5 @@ const interviewerResolver = {
 }
 
 module.exports = {
-  interviewerResolver
+  interviewerResolvers
 }

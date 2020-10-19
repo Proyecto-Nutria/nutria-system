@@ -13,25 +13,29 @@ const {
 } = require('./constants')
 
 const userResolvers = {
+  // TODO: Change the method to be able to do return multiple roles
   /**
    * Creates a new entry in the users' tree, if it's the first time that enters to the
    * system it checks if there is an invitation in the invitations' tree, and creates
 \  * @author interviewee interviewer
    * @example
    * {
-   *   createUser
+   *   getUserTypeOrCreate{
+   *     role,
+   *     firstTime
+   *   }
    * }
    * @return {Object}
    */
   Query: {
-    createUser: (_parent, _args, context) => {
+    getUserTypeOrCreate: (_parent, _args, context) => {
       var databaseInstance = SingletonAdmin.GetInstance()
       return databaseInstance
         .database()
         .ref(USER_REF + context.uid)
         .once(FIREBASE_VAL)
         .then(snap => {
-          if (snap.exists()) return [snap.val().role, false]
+          if (snap.exists()) return { role: snap.val().role, firstTime: false }
           const userRef = databaseInstance.database().ref(USER_REF)
           const invitationRef = databaseInstance.database().ref(INVITATION_REF)
           return FirebaseAdmin.getAuthInformationFrom(context.uid)
@@ -52,7 +56,7 @@ const userResolvers = {
                       name: userRecord.displayName,
                       email: userRecord.email
                     })
-                    return { type: INTERVIEWER_VAL, firstTime: true }
+                    return { role: INTERVIEWER_VAL, firstTime: true }
                   }
                   userRef.child(context.uid).set({
                     uid: context.uid,
@@ -60,7 +64,7 @@ const userResolvers = {
                     name: userRecord.displayName,
                     email: userRecord.email
                   })
-                  return { type: INTERVIEWEE_VAL, firstTime: true }
+                  return { role: INTERVIEWEE_VAL, firstTime: true }
                 })
             })
         })
