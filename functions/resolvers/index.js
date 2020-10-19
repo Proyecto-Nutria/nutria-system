@@ -1,9 +1,9 @@
-const { poolResolver } = require('./poolResolver')
+const { poolResolver } = require('./poolResolvers')
 const { userResolvers } = require('./userResolvers')
 const { interviewResolvers } = require('./interviewResolvers')
 const { invitationResolvers } = require('./invitationResolvers')
-const { intervieweeResolver } = require('./intervieweeResolver')
-const { interviewerResolver } = require('./interviewerResolver')
+const { intervieweeResolver } = require('./intervieweeResolvers')
+const { interviewerResolver } = require('./interviewerResolvers')
 
 const resolvers = [
   poolResolver,
