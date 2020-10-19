@@ -19,6 +19,21 @@ const {
 
 const interviewResolvers = {
   Query: {
+    /**
+     * Gets all interviews greater than the day and hour when the query is invoked
+     * @author interviewee interviewer
+     * @example
+     * mutation {
+     *  cancelInterview(
+     *    cancellation:{
+     *      interviewUid: "uid",
+     *      interviewerUid : "uid",
+     *      interviewDate: "1608451200000"
+     *     }
+     *   )
+     * }
+     * @return {Object[]} Interview
+     */
     getIncomingInterviews: (_parent, _args, context) => {
       return SingletonAdmin
         .GetInstance()
@@ -43,11 +58,23 @@ const interviewResolvers = {
         )
       return 'Inserted Into Database'
     },
-    // TODO: Document all the Mutations and the Querys, JSDoc is an option
     /**
-     * @param interview {Object} The request.
+     * Deletes an interview in interview's tree and sends an email to the interviewer
+     * notifying about the cancellation
+     * @author interviewee interviewer
+     * @param {object} CancellationInput
+     * @example
+     * mutation {
+     *  cancelInterview(
+     *    cancellation:{
+     *      interviewUid: "uid",
+     *      interviewerUid : "uid",
+     *      interviewDate: "1608451200000"
+     *     }
+     *   )
+     * }
      * @return {String}
-    */
+     */
     cancelInterview: async (_parent, { cancellation }) => {
       const { interviewDateFormat, interviewBeginning } = timestampToDate(cancellation.interviewDate)
 
@@ -67,6 +94,25 @@ const interviewResolvers = {
 
       return 'Interview Canceled'
     },
+    /**
+     * Creates a new entry in the room's tree, updates the status of the interview in
+     * interview's tree, creates an event in google calendars and puts the interviewer
+     * as guest, creates the google doc for the interview and sends an email as a
+     * reminder for the interviewee if there is a room available to do the interview
+     * @author interviewee
+     * @param {object} ConfirmationInput
+     * @example
+     * mutation {
+     *  confirmInterview(
+     *    confirmation:{
+     *      interviewUid: "uid",
+     *      intervieweeUid : "uid",
+     *      interviewDate: "1608451200000"
+     *     }
+     *   )
+     * }
+     * @return {String}
+     */
     confirmInterview: async (_parent, { confirmation }, context) => {
       const roomRef = SingletonAdmin.GetInstance().database().ref(ROOM_REF)
       const { interviewDateFormat, interviewBeginning, interviewEnding } = timestampToDate(confirmation.interviewDate)
