@@ -13,8 +13,18 @@ const {
 } = require('./constants')
 
 const userResolvers = {
+  /**
+   * Creates a new entry in the users' tree, if it's the first time that enters to the
+   * system it checks if there is an invitation in the invitations' tree, and creates
+\  * @author interviewee interviewer
+   * @example
+   * {
+   *   createUser
+   * }
+   * @return {Object}
+   */
   Query: {
-    getUserType: (_parent, _args, context) => {
+    createUser: (_parent, _args, context) => {
       var databaseInstance = SingletonAdmin.GetInstance()
       return databaseInstance
         .database()
@@ -42,7 +52,7 @@ const userResolvers = {
                       name: userRecord.displayName,
                       email: userRecord.email
                     })
-                    return [INTERVIEWER_VAL, true]
+                    return { type: INTERVIEWER_VAL, firstTime: true }
                   }
                   userRef.child(context.uid).set({
                     uid: context.uid,
@@ -50,7 +60,7 @@ const userResolvers = {
                     name: userRecord.displayName,
                     email: userRecord.email
                   })
-                  return [INTERVIEWEE_VAL, true]
+                  return { type: INTERVIEWEE_VAL, firstTime: true }
                 })
             })
         })
