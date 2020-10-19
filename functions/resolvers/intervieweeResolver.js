@@ -12,9 +12,9 @@ const {
 const intervieweeResolver = {
   Mutation: {
     /**
-     * Creates an interviewee and its corresponding google drive folder, the folder is
-     * used to put the resume of the interviewee and to store the docs for the future
-     * interviews
+     * Creates a new entry in the interviewees' tree and its corresponding google drive
+     * folder, the folder is used to put the resume of the interviewee and to store the
+     * docs for the future interviews
      * @author interviewee
      * @param {object} IntervieweeInput
      * @example

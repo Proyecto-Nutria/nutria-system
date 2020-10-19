@@ -14,12 +14,12 @@ const query = gql`
   type Mutation{
     #Pool
     enterToPool(preferences: PoolInput): String,
-    # Interviewer
-    createInterviewer(interviewer: InterviewerInput): String,
-    updateInterviewer(interviewer: InterviewerInput): String,
     # Interviewee
     createInterviewee(interviewee: IntervieweeInput): String,
     updateInterviewee(interviewee: IntervieweeUpdateInput): String,
+    # Interviewer
+    createInterviewer(interviewer: InterviewerInput): String,
+    updateInterviewer(interviewer: InterviewerInput): String,
     # Interview
     createInterview(interview: InterviewInput): String,
     confirmInterview(confirmation: ConfirmationInput): String,

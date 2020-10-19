@@ -56,7 +56,7 @@ const interviewResolvers = {
       return 'Inserted Into Database'
     },
     /**
-     * Deletes an interview in interview's tree and sends an email to the interviewer
+     * Deletes an interview in interviews' tree and sends an email to the interviewer
      * notifying about the cancellation
      * @author interviewee interviewer
      * @param {object} CancellationInput
@@ -92,7 +92,7 @@ const interviewResolvers = {
       return 'Interview Canceled'
     },
     /**
-     * Creates a new entry in the room's tree, updates the status of the interview in
+     * Creates a new entry in the rooms' tree, updates the status of the interview in
      * interview's tree, creates an event in google calendars and puts the interviewer
      * as guest, creates the google doc for the interview and sends an email as a
      * reminder for the interviewee if there is a room available to do the interview
