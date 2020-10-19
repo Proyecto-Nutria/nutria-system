@@ -1,17 +1,17 @@
-const { poolResolver } = require('./poolResolvers')
+const { poolResolvers } = require('./poolResolvers')
 const { userResolvers } = require('./userResolvers')
 const { interviewResolvers } = require('./interviewResolvers')
 const { invitationResolvers } = require('./invitationResolvers')
-const { intervieweeResolver } = require('./intervieweeResolvers')
-const { interviewerResolver } = require('./interviewerResolvers')
+const { intervieweeResolvers } = require('./intervieweeResolvers')
+const { interviewerResolvers } = require('./interviewerResolvers')
 
 const resolvers = [
-  poolResolver,
+  poolResolvers,
   userResolvers,
   interviewResolvers,
   invitationResolvers,
-  intervieweeResolver,
-  interviewerResolver
+  intervieweeResolvers,
+  interviewerResolvers
 ]
 
 module.exports = {
