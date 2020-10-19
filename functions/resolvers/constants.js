@@ -21,5 +21,4 @@ module.exports = {
 
   ROOM_REF: 'rooms/',
   ROOM_DATE_ATTR: '/date'
-
 }

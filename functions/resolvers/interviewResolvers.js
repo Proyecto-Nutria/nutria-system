@@ -19,7 +19,7 @@ const {
 
 const interviewResolvers = {
   Query: {
-    getIncomingInterviews: (_parent, { user }, context) => {
+    getIncomingInterviews: (_parent, _args, context) => {
       return SingletonAdmin
         .GetInstance()
         .database()
@@ -35,7 +35,7 @@ const interviewResolvers = {
     }
   },
   Mutation: {
-    createInterview: (_, { interview }) => {
+    createInterview: (_parent, { interview }) => {
       const userRef = SingletonAdmin.GetInstance().database().ref(INTERVIEW_REF)
       userRef
         .push(
@@ -48,7 +48,7 @@ const interviewResolvers = {
      * @param interview {Object} The request.
      * @return {String}
     */
-    cancelInterview: async (_, { cancellation }) => {
+    cancelInterview: async (_parent, { cancellation }) => {
       const { interviewDateFormat, interviewBeginning } = timestampToDate(cancellation.interviewDate)
 
       SingletonAdmin
@@ -67,7 +67,7 @@ const interviewResolvers = {
 
       return 'Interview Canceled'
     },
-    confirmInterview: async (_, { confirmation }, context) => {
+    confirmInterview: async (_parent, { confirmation }, context) => {
       const roomRef = SingletonAdmin.GetInstance().database().ref(ROOM_REF)
       const { interviewDateFormat, interviewBeginning, interviewEnding } = timestampToDate(confirmation.interviewDate)
 

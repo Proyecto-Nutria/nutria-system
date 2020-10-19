@@ -7,7 +7,7 @@ const {
 
 const invitationResolvers = {
   Mutation: {
-    createInvitation: (_, { email }) => {
+    createInvitation: (_parent, { email }) => {
       const invitationRef = SingletonAdmin
         .GetInstance()
         .database()

@@ -5,7 +5,7 @@ const {
 
 const interviewerResolver = {
   Mutation: {
-    createInterviewer: (_, { interviewer }, context) => {
+    createInterviewer: (_parent, { interviewer }, context) => {
       const interviewerUid = context.uid
       const interviewerRef = SingletonAdmin.GetInstance().database().ref(INTERVIEWER_REF)
 

@@ -14,7 +14,7 @@ const {
 
 const userResolvers = {
   Query: {
-    getUserType: (_parent, _args, context, _info) => {
+    getUserType: (_parent, _args, context) => {
       var databaseInstance = SingletonAdmin.GetInstance()
       return databaseInstance
         .database()
