@@ -23,14 +23,11 @@ const interviewResolvers = {
      * Gets all interviews greater than the day and hour when the query is invoked
      * @author interviewee interviewer
      * @example
-     * mutation {
-     *  cancelInterview(
-     *    cancellation:{
-     *      interviewUid: "uid",
-     *      interviewerUid : "uid",
-     *      interviewDate: "1608451200000"
-     *     }
-     *   )
+     * {
+     *  getIncomingInterviews{
+     *    uid,
+     *    date
+     *   }
      * }
      * @return {Object[]} Interview
      */
