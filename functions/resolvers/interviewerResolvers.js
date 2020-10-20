@@ -44,7 +44,7 @@ const interviewerResolvers = {
      * }
      * @return {String}
      */
-    updateInterviewer: (_, { interviewer }, context) => {
+    updateInterviewer: (_parent, { interviewer }, context) => {
       const interviewerUid = context.uid
       const interviewerRef = SingletonAdmin.GetInstance().database().ref(INTERVIEWER_REF)
       interviewerRef.child(interviewerUid).update(JSON.parse(JSON.stringify(interviewer)))
