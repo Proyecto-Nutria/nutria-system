@@ -2,20 +2,8 @@ const {
   GoogleFactory,
   CALENDAR_API,
   GMAIL_API,
-  DRIVE_API,
-  DOC_TYPE,
-  FOLDER_TYPE,
-  SingletonAdmin,
-  FirebaseAdmin
+  DRIVE_API
 } = require('../models')
-
-const {
-  FIREBASE_VAL,
-  ROOM_REF,
-  ROOM_DATE_ATTR,
-  INTERVIEW_REF,
-  INTERVIEW_INTERVIEWEE_UIDDATE
-} = require('../resolvers/constants')
 
 describe('Google Factory ', () => {
   test('It should create a Calendar instance', () => {
