@@ -40,6 +40,7 @@ class Credentials {
 class CalendarAPI extends Credentials {
   constructor () {
     super()
+    this.type = CALENDAR_API
     this.api = google.calendar({ version: 'v3' })
   }
 
@@ -79,6 +80,7 @@ class CalendarAPI extends Credentials {
 class DriveAPI extends Credentials {
   constructor () {
     super()
+    this.type = DRIVE_API
     this.api = google.drive({ version: 'v3' })
   }
 
@@ -175,6 +177,7 @@ class DriveAPI extends Credentials {
 class GmailAPI extends Credentials {
   constructor () {
     super()
+    this.type = GMAIL_API
     this.api = google.gmail({ version: 'v1' })
   }
 
