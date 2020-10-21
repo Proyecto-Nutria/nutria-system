@@ -53,7 +53,7 @@ enum TypeOfInterview {
   ds # Data science
 }
 
-## Inputs are for receiving information from the client
+## Inputs are for receiving information from the clients
 
 input IntervieweeInput {
   school: School!
@@ -104,6 +104,10 @@ input CancellationInput {
 }
 
 ## Types are for querying the information
+type UserType {
+  role: Role!
+  firstTime: Boolean!
+}
 
 type User {
   uid: String!

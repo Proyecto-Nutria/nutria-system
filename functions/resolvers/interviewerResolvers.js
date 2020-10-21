@@ -3,7 +3,7 @@ const {
   INTERVIEWER_REF
 } = require('./constants')
 
-const interviewerResolver = {
+const interviewerResolvers = {
   Mutation: {
     /**
      * Creates a new entry in the interviewers' tree
@@ -44,7 +44,7 @@ const interviewerResolver = {
      * }
      * @return {String}
      */
-    updateInterviewer: (_, { interviewer }, context) => {
+    updateInterviewer: (_parent, { interviewer }, context) => {
       const interviewerUid = context.uid
       const interviewerRef = SingletonAdmin.GetInstance().database().ref(INTERVIEWER_REF)
       interviewerRef.child(interviewerUid).update(JSON.parse(JSON.stringify(interviewer)))
@@ -54,5 +54,5 @@ const interviewerResolver = {
 }
 
 module.exports = {
-  interviewerResolver
+  interviewerResolvers
 }

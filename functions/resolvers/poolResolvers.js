@@ -4,7 +4,7 @@ const {
   POOL_REF
 } = require('./constants')
 
-const poolResolver = {
+const poolResolvers = {
   Query: {
     /**
      * Views the pool, the pool is used to see all the persons that want an interview
@@ -74,5 +74,5 @@ const poolResolver = {
 }
 
 module.exports = {
-  poolResolver
+  poolResolvers
 }

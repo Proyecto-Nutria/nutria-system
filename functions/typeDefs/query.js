@@ -3,7 +3,7 @@ const { gql } = require('apollo-server-express')
 const query = gql`
   type Query {
     # User
-    getUserType: [String],
+    getUserTypeOrCreate: UserType,
     # Pool
     viewPool: [Pool],
     # Interviews
