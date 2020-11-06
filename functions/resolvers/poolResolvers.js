@@ -43,7 +43,7 @@ const poolResolvers = {
      *   enterToPool(
      *     preferences: {
      *       companies: [Google]
-     *       interval: [
+     *       availability: [
      *         {
      *           day: "monday",
      *           interval: ["12-14", "14-16"]
