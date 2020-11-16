@@ -87,8 +87,9 @@ input PoolInput {
 
 input InterviewInput {
   intervieweeUid: String!
-  interviewerUid: String!
-  date: Date!
+  date: String!
+  poolId: String!
+  pending: Int!
 }
 
 input ConfirmationInput {

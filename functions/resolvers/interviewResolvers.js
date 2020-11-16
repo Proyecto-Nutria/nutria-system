@@ -14,11 +14,38 @@ const {
   ROOM_REF,
   ROOM_DATE_ATTR,
   INTERVIEW_REF,
-  INTERVIEW_INTERVIEWEE_UIDDATE
+  INTERVIEW_INTERVIEWEE_UIDDATE,
+  POOL_REF
 } = require('./constants')
 
 const interviewResolvers = {
   Query: {
+    /**
+     * Gets all interviews less than the day and hour when the query is invoked
+     * @author interviewee interviewer
+     * @example
+     * {
+     *  getIncomingInterviews{
+     *    uid,
+     *    date
+     *   }
+     * }
+     * @return {Object[]} Interview
+     */
+    getPastsInterviews: (_parent, _args, context) => {
+      return SingletonAdmin
+        .GetInstance()
+        .database()
+        .ref(INTERVIEW_REF)
+        .orderByChild(INTERVIEW_INTERVIEWEE_UIDDATE)
+        .endAt(`${context.uid}_${Date.now()}`)
+        .once(FIREBASE_VAL)
+        .then(snap => snap.val())
+        .then(val => Object.keys(val).map(key => {
+          val[key].uid = key
+          return val[key]
+        }))
+    },
     /**
      * Gets all interviews greater than the day and hour when the query is invoked
      * @author interviewee interviewer
@@ -47,12 +74,52 @@ const interviewResolvers = {
     }
   },
   Mutation: {
-    createInterview: (_parent, { interview }) => {
+    /**
+     * Creates a new entry in the interviews' tree, updates the status of the entry in
+     * pool's tree decreasing by 1 the pending interviews, if the pending is 0 the elem
+     * is eliminated from the database.
+     * @author interviewer
+     * @param {object} InterviewInput
+     * @example
+     * mutation {
+     *  createInterview(
+     *    interview:{
+     *      intervieweeUid: "uid",
+     *      date : "1608451200000",
+     *      poolId: "poolUid".
+     *      pending: 2
+     *     }
+     *   )
+     * }
+     * @return {String}
+     */
+    createInterview: (_parent, { interview }, context) => {
+      const interviewDate = interview.date
+      const interviewObj = {
+        confirmed: false,
+        date: interviewDate,
+        intervieweeUid_date: `${context.uid}_${interviewDate}`,
+        interviewerUid_date: `${interview.intervieweeUid}_${interviewDate}`
+      }
+
       const userRef = SingletonAdmin.GetInstance().database().ref(INTERVIEW_REF)
       userRef
         .push(
-          JSON.parse(JSON.stringify(interview))
+          JSON.parse(JSON.stringify(interviewObj))
         )
+
+      const poolRef = SingletonAdmin.GetInstance().database().ref(POOL_REF)
+      const pendingInterviews = interview.pending - 1
+      if (pendingInterviews === 0) {
+        poolRef
+          .child(interview.poolId)
+          .remove()
+      } else {
+        poolRef
+          .child(interview.poolId)
+          .update({ pending: pendingInterviews })
+      }
+
       return 'Inserted Into Database'
     },
     /**

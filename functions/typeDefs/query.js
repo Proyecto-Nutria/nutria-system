@@ -7,6 +7,7 @@ const query = gql`
     # Pool
     viewPool: [Pool],
     # Interviews
+    getPastsInterviews: [Interview],
     getIncomingInterviews: [Interview],
     # Interviewee
     getAllInterviewees: [User]
