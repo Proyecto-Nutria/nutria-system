@@ -10,14 +10,14 @@ const {
 } = require('../models')
 
 const {
+  INTERVIEWEE_VAL,
   INTERVIEWER_VAL,
   FIREBASE_VAL,
   ROOM_REF,
   ROOM_DATE_ATTR,
   INTERVIEW_REF,
   INTERVIEW_INTERVIEWEE_UIDDATE,
-  POOL_REF,
-  INTERVIEWEE_REF
+  POOL_REF
 } = require('./constants')
 
 const interviewResolvers = {
@@ -162,7 +162,7 @@ const interviewResolvers = {
       var uidOfInvertedRole = intervieweeUid
 
       if (context.uid === intervieweeUid) {
-        typeOfUser = INTERVIEWEE_REF
+        typeOfUser = INTERVIEWEE_VAL
         uidOfInvertedRole = interviewerUid
       }
 
