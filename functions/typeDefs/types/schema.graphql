@@ -94,13 +94,11 @@ input InterviewInput {
 
 input ConfirmationInput {
   interviewUid: String!
-  intervieweeUid: String!
   interviewDate: String!
 }
 
 input CancellationInput {
   interviewUid: String!
-  interviewerUid: String!
   interviewDate: String!
 }
 
@@ -124,6 +122,7 @@ type Interval {
 
 type Pool {
   uid: String!
+  userUid: String!
   type: TypeOfInterview!
   role: CompanyRole!
   priority: Int!

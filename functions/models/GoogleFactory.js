@@ -190,9 +190,9 @@ class GmailAPI extends Credentials {
     await this._sendEmail(to, subject, emailTemplate)
   }
 
-  async sendCancellationEmail (to, date, hour) {
+  async sendCancellationEmail (to, date, hour, userType) {
     const subject = `Cancellation of Nutria Interview on ${date}`
-    const emailBody = cancellationBody(date, hour)
+    const emailBody = cancellationBody(date, hour, userType)
     const emailTemplate = emailGeneralTemplate(emailBody)
 
     await this._sendEmail(to, subject, emailTemplate)

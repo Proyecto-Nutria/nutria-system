@@ -10,12 +10,14 @@ const {
 } = require('../models')
 
 const {
+  INTERVIEWER_VAL,
   FIREBASE_VAL,
   ROOM_REF,
   ROOM_DATE_ATTR,
   INTERVIEW_REF,
   INTERVIEW_INTERVIEWEE_UIDDATE,
-  POOL_REF
+  POOL_REF,
+  INTERVIEWEE_REF
 } = require('./constants')
 
 const interviewResolvers = {
@@ -132,29 +134,51 @@ const interviewResolvers = {
      *  cancelInterview(
      *    cancellation:{
      *      interviewUid: "uid",
-     *      interviewerUid : "uid",
      *      interviewDate: "1608451200000"
      *     }
      *   )
      * }
      * @return {String}
      */
-    cancelInterview: async (_parent, { cancellation }) => {
-      const { interviewDateFormat, interviewBeginning } = timestampToDate(cancellation.interviewDate)
-
-      SingletonAdmin
+    cancelInterview: async (_parent, { cancellation }, context) => {
+      const interviewRef = SingletonAdmin
         .GetInstance()
         .database()
         .ref(INTERVIEW_REF)
-        .child(cancellation.interviewUid)
-        .remove()
 
-      const intervieweeEmail = (await FirebaseAdmin.getAuthInformationFrom(cancellation.interviewerUid)).email
+      const interviewInformation = await interviewRef
+        .orderByKey()
+        .equalTo(cancellation.interviewUid)
+        .once(FIREBASE_VAL)
+        .then(snap => snap.val())
+        .then(val => Object.keys(val).map(key => {
+          return val[key]
+        }))
+
+      const interviewerUid = getUidFromData(interviewInformation[0].intervieweeUid_date)
+      const intervieweeUid = getUidFromData(interviewInformation[0].interviewerUid_date)
+
+      var typeOfUser = INTERVIEWER_VAL
+      var uidOfInvertedRole = intervieweeUid
+
+      if (context.uid === intervieweeUid) {
+        typeOfUser = INTERVIEWEE_REF
+        uidOfInvertedRole = interviewerUid
+      }
+
+      const { interviewDateFormat, interviewBeginning } = timestampToDate(cancellation.interviewDate)
+      const intervieweeEmail = (await FirebaseAdmin.getAuthInformationFrom(uidOfInvertedRole)).email
       const gmailAPI = new GoogleFactory(GMAIL_API)
       await gmailAPI.sendCancellationEmail(
         intervieweeEmail,
         interviewDateFormat,
-        interviewBeginning)
+        interviewBeginning,
+        typeOfUser
+      )
+
+      interviewRef
+        .child(cancellation.interviewUid)
+        .remove()
 
       return 'Interview Canceled'
     },
@@ -170,7 +194,6 @@ const interviewResolvers = {
      *  confirmInterview(
      *    confirmation:{
      *      interviewUid: "uid",
-     *      intervieweeUid : "uid",
      *      interviewDate: "1608451200000"
      *     }
      *   )
@@ -250,10 +273,22 @@ const interviewResolvers = {
         .child(confirmation.interviewUid)
         .update({ confirmed: true })
 
+      // Pre Step 4: Get the uid of the interviewer
+      const interviewInformation = await interviewRef
+        .orderByKey()
+        .equalTo(confirmation.interviewUid)
+        .once(FIREBASE_VAL)
+        .then(snap => snap.val())
+        .then(val => Object.keys(val).map(key => {
+          return val[key]
+        }))
+
+      const interviewerUid = getUidFromData(interviewInformation[0].intervieweeUid_date)
+
       // Step 4: Create the event in the calendar
       // Note: Be careful, this may be a production service it means that people want to
       // avoid because local testing is meant to be hermetic
-      const interviewerEmail = (await FirebaseAdmin.getAuthInformationFrom(context.uid)).email
+      const interviewerEmail = (await FirebaseAdmin.getAuthInformationFrom(interviewerUid)).email
       const calendarAPI = new GoogleFactory(CALENDAR_API)
       calendarAPI.createEvent(possibleRoom, confirmation.interviewDate, interviewerEmail)
 
@@ -268,8 +303,8 @@ const interviewResolvers = {
       const docId = await driveAPI.createResource(`Interview ${interviewDateFormat}`, DOC_TYPE, intervieweeFolderId)
       driveAPI.changePermissionsOf(docId)
 
-      // Step 7: Send the email to the final user with all the information
-      const intervieweeEmail = (await FirebaseAdmin.getAuthInformationFrom(confirmation.intervieweeUid)).email
+      // Step 7: Send the email to the interviewee with all the information
+      const intervieweeEmail = (await FirebaseAdmin.getAuthInformationFrom(context.uid)).email
       const gmailAPI = new GoogleFactory(GMAIL_API)
       await gmailAPI.sendConfirmationEmail(intervieweeEmail,
         possibleRoom,
@@ -295,6 +330,10 @@ function timestampToDate (timestamp) {
     interviewBeginning: interviewBeginning,
     interviewEnding: interviewEnding
   }
+}
+
+function getUidFromData (data) {
+  return data.split('_')[0]
 }
 
 module.exports = {

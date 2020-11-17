@@ -29,7 +29,11 @@ const poolResolvers = {
         .ref(POOL_REF)
         .once(FIREBASE_VAL)
         .then(snap => snap.val())
-        .then(val => Object.keys(val).map(key => val[key]))
+        .then(val => Object.keys(val).map(key => {
+          val[key].uid = key
+          return val[key]
+        }
+        ))
     }
   },
   Mutation: {
@@ -64,7 +68,7 @@ const poolResolvers = {
      */
     enterToPool: (_parent, { preferences }, context) => {
       const poolRef = SingletonAdmin.GetInstance().database().ref(POOL_REF)
-      preferences.uid = context.uid
+      preferences.userUid = context.uid
       preferences.priority = 10
       poolRef.push(JSON.parse(JSON.stringify(preferences)))
 
