@@ -1,8 +1,7 @@
-const admin = require('firebase-admin')
 const {
-  SingletonAdmin,
   FirebaseAdmin
 } = require('../models')
+
 const {
   FIREBASE_VAL,
   INTERVIEWEE_VAL,
@@ -11,6 +10,10 @@ const {
   INVITATION_REF,
   INVITATION_EMAIL_ATTR
 } = require('./constants')
+
+const {
+  getDatabaseReferenceOf
+} = require('../utils')
 
 const userResolvers = {
   // TODO: Change the method to be able to do return multiple roles
@@ -29,15 +32,13 @@ const userResolvers = {
    */
   Query: {
     getUserTypeOrCreate: (_parent, _args, context) => {
-      var databaseInstance = SingletonAdmin.GetInstance()
-      return databaseInstance
-        .database()
-        .ref(USER_REF + context.uid)
+      const uid = context.uid
+      return getDatabaseReferenceOf(uid, USER_REF + context.uid)
         .once(FIREBASE_VAL)
         .then(snap => {
           if (snap.exists()) return { role: snap.val().role, firstTime: false }
-          const userRef = databaseInstance.database().ref(USER_REF)
-          const invitationRef = databaseInstance.database().ref(INVITATION_REF)
+          const userRef = getDatabaseReferenceOf(uid, USER_REF)
+          const invitationRef = getDatabaseReferenceOf(uid, INVITATION_REF)
           return FirebaseAdmin.getAuthInformationFrom(context.uid)
             .then(userRecord => {
               return invitationRef

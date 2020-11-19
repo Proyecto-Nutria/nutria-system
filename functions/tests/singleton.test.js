@@ -3,8 +3,8 @@ describe('Firebase Singleton ', () => {
     const { SingletonAdmin } = require('../models')
     var firstSingleInstance = {}
     var secondSingleInstance = {}
-    firstSingleInstance = SingletonAdmin.GetInstance()
-    secondSingleInstance = SingletonAdmin.GetInstance()
+    firstSingleInstance = SingletonAdmin.GetInstance(null)
+    secondSingleInstance = SingletonAdmin.GetInstance(null)
     expect(firstSingleInstance === secondSingleInstance).toEqual(true)
   })
 })

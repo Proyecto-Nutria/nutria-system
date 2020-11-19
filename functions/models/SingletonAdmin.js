@@ -1,22 +1,39 @@
 var SingletonAdmin = (function () {
-  var instance
+  var adminInstance
+  var userInstance
 
-  function CreateInstance () {
+  function CreateInstance (userUid) {
     const firebaseAdmin = require('firebase-admin')
     const serviceAccount = require('../config/firebase-credentials.json')
-    firebaseAdmin.initializeApp({
+
+    const firebaseConfiguration = {
       credential: firebaseAdmin.credential.cert(serviceAccount),
       databaseURL: 'https://nutria-system.firebaseio.com'
-    })
-    return firebaseAdmin
+    }
+
+    if (userUid !== null) {
+      firebaseConfiguration.databaseAuthVariableOverride = {
+        uid: userUid
+      }
+      return firebaseAdmin.initializeApp(firebaseConfiguration, 'user')
+    } else {
+      return firebaseAdmin.initializeApp(firebaseConfiguration)
+    }
   }
 
   return {
-    GetInstance: function () {
-      if (!instance) {
-        instance = CreateInstance()
+    GetInstance: function (userUid) {
+      if (userUid === null) {
+        if (!adminInstance) {
+          adminInstance = CreateInstance(userUid)
+        }
+        return adminInstance
+      } else {
+        if (!userInstance) {
+          userInstance = CreateInstance(userUid)
+        }
+        return userInstance
       }
-      return instance
     }
   }
 })()

@@ -1,10 +1,11 @@
 const functions = require('firebase-functions')
 const express = require('express')
-const { ApolloServer, AuthenticationError } = require('apollo-server-express')
+const { ApolloServer } = require('apollo-server-express')
 const { typeDefs } = require('./typeDefs')
 const { resolvers } = require('./resolvers')
-const { SingletonAdmin } = require('./models')
 const { Readable } = require('stream')
+const { FirebaseAdmin } = require('./models')
+const { authenticationError } = require('./utils')
 
 const app = express()
 
@@ -29,15 +30,8 @@ const server = new ApolloServer({
   resolvers,
   context: async ({ req }) => {
     const token = req.headers.authorization
-
-    var FirebaseAuthentication = function verifyIdToken () {
-      return SingletonAdmin.GetInstance().auth().verifyIdToken(token)
-        .then(token => { return token.uid })
-        .catch(_ => { return false })
-    }
-
-    const uidFirebase = await FirebaseAuthentication()
-    if (uidFirebase === false) throw new AuthenticationError('you must be logged in')
+    const uidFirebase = await FirebaseAdmin.verifyToken(token)
+    if (uidFirebase === false) throw authenticationError()
     return { uid: uidFirebase }
   }
 })

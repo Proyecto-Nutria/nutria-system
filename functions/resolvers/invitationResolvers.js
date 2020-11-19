@@ -1,9 +1,13 @@
-const { SingletonAdmin } = require('../models')
 const {
   FIREBASE_VAL,
   INVITATION_REF,
   INVITATION_EMAIL_ATTR
 } = require('./constants')
+
+const {
+  getDatabaseReferenceOf,
+  forbiddenError
+} = require('../utils')
 
 const invitationResolvers = {
   Mutation: {
@@ -19,11 +23,8 @@ const invitationResolvers = {
      * }
      * @return {String}
      */
-    createInvitation: (_parent, { email }) => {
-      const invitationRef = SingletonAdmin
-        .GetInstance()
-        .database()
-        .ref(INVITATION_REF)
+    createInvitation: (_parent, { email }, context) => {
+      const invitationRef = getDatabaseReferenceOf(context.uid, INVITATION_REF)
 
       return invitationRef
         .orderByChild(INVITATION_EMAIL_ATTR)
@@ -35,12 +36,15 @@ const invitationResolvers = {
             if (invitation.used === true) return 'No invitation needed'
             return 'Invitation set but user not registered yet'
           }
-          invitationRef.push({
-            email: email,
-            used: false
-          })
+          invitationRef
+            .push({
+              email: email,
+              used: false
+            })
+
           return 'Inserted Into Database'
         })
+        .catch(_ => { throw forbiddenError() })
     }
   }
 }

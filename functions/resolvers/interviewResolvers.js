@@ -5,7 +5,6 @@ const {
   DRIVE_API,
   DOC_TYPE,
   FOLDER_TYPE,
-  SingletonAdmin,
   FirebaseAdmin
 } = require('../models')
 
@@ -19,6 +18,10 @@ const {
   INTERVIEW_INTERVIEWEE_UIDDATE,
   POOL_REF
 } = require('./constants')
+
+const {
+  getDatabaseReferenceOf
+} = require('../utils')
 
 const interviewResolvers = {
   Query: {
@@ -35,12 +38,10 @@ const interviewResolvers = {
      * @return {Object[]} Interview
      */
     getPastsInterviews: (_parent, _args, context) => {
-      return SingletonAdmin
-        .GetInstance()
-        .database()
-        .ref(INTERVIEW_REF)
+      const uid = context.uid
+      return getDatabaseReferenceOf(uid, INTERVIEW_REF)
         .orderByChild(INTERVIEW_INTERVIEWEE_UIDDATE)
-        .endAt(`${context.uid}_${Date.now()}`)
+        .endAt(`${uid}_${Date.now()}`)
         .once(FIREBASE_VAL)
         .then(snap => snap.val())
         .then(val => Object.keys(val).map(key => {
@@ -61,10 +62,8 @@ const interviewResolvers = {
      * @return {Object[]} Interview
      */
     getIncomingInterviews: (_parent, _args, context) => {
-      return SingletonAdmin
-        .GetInstance()
-        .database()
-        .ref(INTERVIEW_REF)
+      const uid = context.uid
+      return getDatabaseReferenceOf(uid, INTERVIEW_REF)
         .orderByChild(INTERVIEW_INTERVIEWEE_UIDDATE)
         .startAt(`${context.uid}_${Date.now()}`)
         .once(FIREBASE_VAL)
@@ -96,6 +95,7 @@ const interviewResolvers = {
      * @return {String}
      */
     createInterview: (_parent, { interview }, context) => {
+      const uid = context.uid
       const interviewDate = interview.date
       const interviewObj = {
         confirmed: false,
@@ -104,13 +104,13 @@ const interviewResolvers = {
         interviewerUid_date: `${interview.intervieweeUid}_${interviewDate}`
       }
 
-      const userRef = SingletonAdmin.GetInstance().database().ref(INTERVIEW_REF)
+      const userRef = getDatabaseReferenceOf(uid, INTERVIEW_REF)
       userRef
         .push(
           JSON.parse(JSON.stringify(interviewObj))
         )
 
-      const poolRef = SingletonAdmin.GetInstance().database().ref(POOL_REF)
+      const poolRef = getDatabaseReferenceOf(uid, POOL_REF)
       const pendingInterviews = interview.pending - 1
       if (pendingInterviews === 0) {
         poolRef
@@ -141,10 +141,8 @@ const interviewResolvers = {
      * @return {String}
      */
     cancelInterview: async (_parent, { cancellation }, context) => {
-      const interviewRef = SingletonAdmin
-        .GetInstance()
-        .database()
-        .ref(INTERVIEW_REF)
+      const uid = context.uid
+      const interviewRef = getDatabaseReferenceOf(uid, INTERVIEW_REF)
 
       const interviewInformation = await interviewRef
         .orderByKey()
@@ -161,7 +159,7 @@ const interviewResolvers = {
       var typeOfUser = INTERVIEWER_VAL
       var uidOfInvertedRole = intervieweeUid
 
-      if (context.uid === intervieweeUid) {
+      if (uid === intervieweeUid) {
         typeOfUser = INTERVIEWEE_VAL
         uidOfInvertedRole = interviewerUid
       }
@@ -201,7 +199,8 @@ const interviewResolvers = {
      * @return {String}
      */
     confirmInterview: async (_parent, { confirmation }, context) => {
-      const roomRef = SingletonAdmin.GetInstance().database().ref(ROOM_REF)
+      const uid = context.uid
+      const roomRef = getDatabaseReferenceOf(uid, ROOM_REF)
       const { interviewDateFormat, interviewBeginning, interviewEnding } = timestampToDate(confirmation.interviewDate)
 
       // Step 1: Find an available room
@@ -268,7 +267,7 @@ const interviewResolvers = {
       }
 
       // Step 3: Update the status of the interview
-      const interviewRef = SingletonAdmin.GetInstance().database().ref(INTERVIEW_REF)
+      const interviewRef = getDatabaseReferenceOf(uid, INTERVIEW_REF)
       interviewRef
         .child(confirmation.interviewUid)
         .update({ confirmed: true })
@@ -304,7 +303,7 @@ const interviewResolvers = {
       driveAPI.changePermissionsOf(docId)
 
       // Step 7: Send the email to the interviewee with all the information
-      const intervieweeEmail = (await FirebaseAdmin.getAuthInformationFrom(context.uid)).email
+      const intervieweeEmail = (await FirebaseAdmin.getAuthInformationFrom(uid)).email
       const gmailAPI = new GoogleFactory(GMAIL_API)
       await gmailAPI.sendConfirmationEmail(intervieweeEmail,
         possibleRoom,

@@ -1,8 +1,12 @@
-const { SingletonAdmin } = require('../models')
 const {
   FIREBASE_VAL,
   POOL_REF
 } = require('./constants')
+
+const {
+  getDatabaseReferenceOf,
+  forbiddenError
+} = require('../utils')
 
 const poolResolvers = {
   Query: {
@@ -22,11 +26,8 @@ const poolResolvers = {
      * }
      * @return {Object[]} Pool
      */
-    viewPool: () => {
-      return SingletonAdmin
-        .GetInstance()
-        .database()
-        .ref(POOL_REF)
+    viewPool: (_parent, { _ }, context) => {
+      return getDatabaseReferenceOf(context.uid, POOL_REF)
         .once(FIREBASE_VAL)
         .then(snap => snap.val())
         .then(val => Object.keys(val).map(key => {
@@ -34,6 +35,7 @@ const poolResolvers = {
           return val[key]
         }
         ))
+        .catch(() => { throw forbiddenError() })
     }
   },
   Mutation: {
@@ -67,7 +69,7 @@ const poolResolvers = {
      * @return {String}
      */
     enterToPool: (_parent, { preferences }, context) => {
-      const poolRef = SingletonAdmin.GetInstance().database().ref(POOL_REF)
+      const poolRef = getDatabaseReferenceOf(context.uid, POOL_REF)
       preferences.userUid = context.uid
       preferences.priority = 10
       poolRef.push(JSON.parse(JSON.stringify(preferences)))

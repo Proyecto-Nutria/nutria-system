@@ -1,5 +1,4 @@
 const {
-  SingletonAdmin,
   GoogleFactory,
   DRIVE_API,
   PDF_TYPE,
@@ -8,6 +7,10 @@ const {
 const {
   INTERVIEWEE_REF
 } = require('./constants')
+const {
+  getDatabaseReferenceOf,
+  forbiddenError
+} = require('../utils')
 
 const intervieweeResolvers = {
   Mutation: {
@@ -34,12 +37,15 @@ const intervieweeResolvers = {
       const driveAPI = new GoogleFactory(DRIVE_API)
       const intervieweeFolderId = await driveAPI.createResource(intervieweeUid, FOLDER_TYPE)
       await driveAPI.createResource('resume.pdf', PDF_TYPE, intervieweeFolderId, stream)
-      const intervieweeRef = SingletonAdmin.GetInstance().database().ref(INTERVIEWEE_REF)
+      const intervieweeRef = getDatabaseReferenceOf(context.uid, INTERVIEWEE_REF)
 
       interviewee.uid = intervieweeUid
       interviewee.folderuid = intervieweeFolderId
       // Set will overwrite the data at the specified location
-      intervieweeRef.child(intervieweeUid).set(JSON.parse(JSON.stringify(interviewee)))
+      intervieweeRef
+        .child(intervieweeUid)
+        .set(JSON.parse(JSON.stringify(interviewee)))
+        .catch(_ => { throw forbiddenError() })
 
       return 'Inserted Into Database'
     },
@@ -69,8 +75,11 @@ const intervieweeResolvers = {
         await driveAPI.createResource('resume.pdf', PDF_TYPE, intervieweeFolderId, stream)
       }
 
-      const interviewerRef = SingletonAdmin.GetInstance().database().ref(INTERVIEWEE_REF)
-      interviewerRef.child(intervieweeUid).update(JSON.parse(JSON.stringify(interviewee)))
+      const interviewerRef = getDatabaseReferenceOf(intervieweeUid, INTERVIEWEE_REF)
+      interviewerRef
+        .child(intervieweeUid)
+        .update(JSON.parse(JSON.stringify(interviewee)))
+        .catch(_ => { throw forbiddenError() })
       return 'Interviewee Updated'
     }
   }
