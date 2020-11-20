@@ -2,7 +2,7 @@ const {
   SingletonAdmin
 } = require('../models')
 
-function getDatabaseReferenceOf (rootDatabase, uid) {
+function getDatabaseReferenceOf (uid, rootDatabase) {
   return SingletonAdmin.GetInstance(uid).database().ref(rootDatabase)
 }
 

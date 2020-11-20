@@ -51,10 +51,10 @@ const interviewerResolvers = {
      * }
      * @return {String}
      */
-    updateInterviewer: (_parent, { interviewer }, context) => {
+    updateInterviewer: async (_parent, { interviewer }, context) => {
       const interviewerUid = context.uid
       const interviewerRef = getDatabaseReferenceOf(interviewerUid, INTERVIEWER_REF)
-      interviewerRef
+      await interviewerRef
         .child(interviewerUid)
         .update(JSON.parse(JSON.stringify(interviewer)))
         .catch(_ => { throw forbiddenError() })

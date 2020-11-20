@@ -15,9 +15,11 @@ var SingletonAdmin = (function () {
       firebaseConfiguration.databaseAuthVariableOverride = {
         uid: userUid
       }
-      return firebaseAdmin.initializeApp(firebaseConfiguration, 'user')
+      const userAdmin = firebaseAdmin.initializeApp(firebaseConfiguration, 'user')
+      return userAdmin
     } else {
-      return firebaseAdmin.initializeApp(firebaseConfiguration)
+      firebaseAdmin.initializeApp(firebaseConfiguration)
+      return firebaseAdmin
     }
   }
 
