@@ -33,15 +33,17 @@ const intervieweeResolvers = {
      */
     createInterviewee: async (_parent, { interviewee }, context) => {
       const { stream } = await interviewee.resume
+
       const intervieweeUid = context.uid
       const driveAPI = new GoogleFactory(DRIVE_API)
       const intervieweeFolderId = await driveAPI.createResource(intervieweeUid, FOLDER_TYPE)
       await driveAPI.createResource('resume.pdf', PDF_TYPE, intervieweeFolderId, stream)
-      const intervieweeRef = getDatabaseReferenceOf(context.uid, INTERVIEWEE_REF)
+      const intervieweeRef = getDatabaseReferenceOf(intervieweeUid, INTERVIEWEE_REF)
 
+      delete interviewee.resume
       interviewee.uid = intervieweeUid
       interviewee.folderuid = intervieweeFolderId
-      // Set will overwrite the data at the specified location
+
       intervieweeRef
         .child(intervieweeUid)
         .set(JSON.parse(JSON.stringify(interviewee)))
@@ -73,6 +75,7 @@ const intervieweeResolvers = {
         const intervieweeResumeId = await driveAPI.getResourceId(PDF_TYPE, 'resume.pdf')
         await driveAPI.deleteResource(intervieweeResumeId)
         await driveAPI.createResource('resume.pdf', PDF_TYPE, intervieweeFolderId, stream)
+        delete interviewee.resume
       }
 
       const interviewerRef = getDatabaseReferenceOf(intervieweeUid, INTERVIEWEE_REF)
