@@ -1,6 +1,11 @@
 const {
+  FirebaseAdmin
+} = require('../models')
+
+const {
   FIREBASE_VAL,
-  POOL_REF
+  POOL_REF,
+  INTERVIEWEE_REF
 } = require('./constants')
 
 const {
@@ -68,9 +73,19 @@ const poolResolvers = {
      * }
      * @return {String}
      */
-    enterToPool: (_parent, { preferences }, context) => {
-      const poolRef = getDatabaseReferenceOf(context.uid, POOL_REF)
+    enterToPool: async (_parent, { preferences }, context) => {
+      const uid = context.uid
+      const poolRef = getDatabaseReferenceOf(uid, POOL_REF)
+
       preferences.userUid = context.uid
+      preferences.person = await FirebaseAdmin.getAuthInformationFrom(uid)
+        .then(userRecord => { return userRecord.displayName })
+      preferences.folder = await getDatabaseReferenceOf(uid, INTERVIEWEE_REF + uid)
+        .once(FIREBASE_VAL)
+        .then(snap => {
+          if (snap.exists()) return snap.val().folderuid
+          return ''
+        })
       preferences.priority = 10
       poolRef.push(JSON.parse(JSON.stringify(preferences)))
 
