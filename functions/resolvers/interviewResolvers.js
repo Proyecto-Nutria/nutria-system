@@ -266,13 +266,8 @@ const interviewResolvers = {
         })
       }
 
-      // Step 3: Update the status of the interview
+      // Step 3: Get the uid of the interviewer
       const interviewRef = getDatabaseReferenceOf(uid, INTERVIEW_REF)
-      interviewRef
-        .child(confirmation.interviewUid)
-        .update({ confirmed: true })
-
-      // Pre Step 4: Get the uid of the interviewer
       const interviewInformation = await interviewRef
         .orderByKey()
         .equalTo(confirmation.interviewUid)
@@ -281,7 +276,6 @@ const interviewResolvers = {
         .then(val => Object.keys(val).map(key => {
           return val[key]
         }))
-
       const interviewerUid = getUidFromData(interviewInformation[0].intervieweeUid_date)
 
       // Step 4: Create the event in the calendar
@@ -298,9 +292,18 @@ const interviewResolvers = {
         return 'Interviewee folder does not exist'
       }
 
-      // Step 6: Create the google docs inside the folder and change its permissions
+      // Step 5: Create the google docs inside the folder and change its permissions
       const docId = await driveAPI.createResource(`Interview ${interviewDateFormat}`, DOC_TYPE, intervieweeFolderId)
       driveAPI.changePermissionsOf(docId)
+
+      // Step 6: Update the status of the interview
+      interviewRef
+        .child(confirmation.interviewUid)
+        .update({
+          confirmed: true,
+          doc: docId,
+          room: possibleRoom
+        })
 
       // Step 7: Send the email to the interviewee with all the information
       const intervieweeEmail = (await FirebaseAdmin.getAuthInformationFrom(uid)).email
