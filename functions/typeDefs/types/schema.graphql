@@ -129,6 +129,8 @@ type Pool {
   language: [ProgrammingLanguage]!
   companies: [Company]!
   availability: [Interval]!
+  folder: String!
+  person: String!
 }
 
 # TODO: See if it is necessary to join user with interviewee and interviewer
