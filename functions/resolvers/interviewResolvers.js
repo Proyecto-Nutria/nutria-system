@@ -292,11 +292,11 @@ const interviewResolvers = {
         return 'Interviewee folder does not exist'
       }
 
-      // Step 5: Create the google docs inside the folder and change its permissions
+      // Step 6: Create the google docs inside the folder and change its permissions
       const docId = await driveAPI.createResource(`Interview ${interviewDateFormat}`, DOC_TYPE, intervieweeFolderId)
       driveAPI.changePermissionsOf(docId)
 
-      // Step 6: Update the status of the interview
+      // Step 7: Update the status of the interview
       interviewRef
         .child(confirmation.interviewUid)
         .update({
@@ -305,7 +305,7 @@ const interviewResolvers = {
           room: possibleRoom
         })
 
-      // Step 7: Send the email to the interviewee with all the information
+      // Step 8: Send the email to the interviewee with all the information
       const intervieweeEmail = (await FirebaseAdmin.getAuthInformationFrom(uid)).email
       const gmailAPI = new GoogleFactory(GMAIL_API)
       await gmailAPI.sendConfirmationEmail(intervieweeEmail,
