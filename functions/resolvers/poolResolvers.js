@@ -35,12 +35,15 @@ const poolResolvers = {
       return getDatabaseReferenceOf(context.uid, POOL_REF)
         .once(FIREBASE_VAL)
         .then(snap => snap.val())
-        .then(val => Object.keys(val).map(key => {
-          val[key].uid = key
-          return val[key]
-        }
-        ))
-        .catch(() => { throw forbiddenError() })
+        .then(val => {
+          if (!val) { return null }
+          return Object.keys(val).map(key => {
+            val[key].uid = key
+            return val[key]
+          }
+          )
+        })
+        .catch((error) => { console.log(error); throw forbiddenError() })
     }
   },
   Mutation: {
