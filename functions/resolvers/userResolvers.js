@@ -53,7 +53,7 @@ const userResolvers = {
                     })
                     userRef.child(context.uid).set({
                       uid: context.uid,
-                      rol: INTERVIEWER_VAL,
+                      role: INTERVIEWER_VAL,
                       name: userRecord.displayName,
                       email: userRecord.email
                     })
@@ -61,7 +61,7 @@ const userResolvers = {
                   }
                   userRef.child(context.uid).set({
                     uid: context.uid,
-                    rol: INTERVIEWEE_VAL,
+                    role: INTERVIEWEE_VAL,
                     name: userRecord.displayName,
                     email: userRecord.email
                   })
