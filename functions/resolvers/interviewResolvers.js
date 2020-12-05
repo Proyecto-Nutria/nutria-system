@@ -16,7 +16,9 @@ const {
   ROOM_DATE_ATTR,
   INTERVIEW_REF,
   INTERVIEW_INTERVIEWEE_UIDDATE,
-  POOL_REF
+  POOL_REF,
+  USER_REF,
+  INTERVIEW_INTERVIEWER_UIDDATE
 } = require('./constants')
 
 const {
@@ -39,8 +41,9 @@ const interviewResolvers = {
      */
     getPastsInterviews: (_parent, _args, context) => {
       const uid = context.uid
+
       return getDatabaseReferenceOf(uid, INTERVIEW_REF)
-        .orderByChild(INTERVIEW_INTERVIEWEE_UIDDATE)
+        .orderByChild(getOrderCriteria(uid))
         .endAt(`${uid}_${Date.now()}`)
         .once(FIREBASE_VAL)
         .then(snap => snap.val())
@@ -64,7 +67,7 @@ const interviewResolvers = {
     getIncomingInterviews: (_parent, _args, context) => {
       const uid = context.uid
       return getDatabaseReferenceOf(uid, INTERVIEW_REF)
-        .orderByChild(INTERVIEW_INTERVIEWEE_UIDDATE)
+        .orderByChild(getOrderCriteria(uid))
         .startAt(`${context.uid}_${Date.now()}`)
         .once(FIREBASE_VAL)
         .then(snap => snap.val())
@@ -100,8 +103,8 @@ const interviewResolvers = {
       const interviewObj = {
         confirmed: false,
         date: interviewDate,
-        intervieweeUid_date: `${context.uid}_${interviewDate}`,
-        interviewerUid_date: `${interview.intervieweeUid}_${interviewDate}`
+        intervieweeUid_date: `${interview.intervieweeUid}_${interviewDate}`,
+        interviewerUid_date: `${context.uid}_${interviewDate}`
       }
 
       const userRef = getDatabaseReferenceOf(uid, INTERVIEW_REF)
@@ -317,6 +320,18 @@ const interviewResolvers = {
       return 'Interview Confirmed'
     }
   }
+}
+
+function getOrderCriteria (uid) {
+  const userRole = getDatabaseReferenceOf(uid, USER_REF + uid)
+    .once(FIREBASE_VAL)
+    .then(snap => snap.val())
+    .then(val => val.role)
+
+  var orderCriteria = INTERVIEW_INTERVIEWEE_UIDDATE
+  if (userRole === INTERVIEWER_VAL) orderCriteria = INTERVIEW_INTERVIEWER_UIDDATE
+
+  return orderCriteria
 }
 
 function timestampToDate (timestamp) {
