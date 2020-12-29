@@ -43,7 +43,7 @@ const poolResolvers = {
           }
           )
         })
-        .catch((error) => { console.log(error); throw forbiddenError() })
+        .catch(e => { console.error(e); throw forbiddenError() })
     }
   },
   Mutation: {

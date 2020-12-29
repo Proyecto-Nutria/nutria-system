@@ -32,7 +32,7 @@ const interviewerResolvers = {
       interviewerRef
         .child(interviewerUid)
         .set(JSON.parse(JSON.stringify(interviewer)))
-        .catch(_ => { throw forbiddenError() })
+        .catch(e => { console.error(e); throw forbiddenError() })
 
       return 'Inserted Into Database'
     },
@@ -57,7 +57,7 @@ const interviewerResolvers = {
       await interviewerRef
         .child(interviewerUid)
         .update(JSON.parse(JSON.stringify(interviewer)))
-        .catch(_ => { throw forbiddenError() })
+        .catch(e => { console.error(e); throw forbiddenError() })
       return 'Interviewer Updated'
     }
   }

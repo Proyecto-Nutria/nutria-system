@@ -71,8 +71,8 @@ class CalendarAPI extends Credentials {
         calendarId: 'primary',
         resource: eventData
       })
-      .catch((error) => {
-        console.error(error)
+      .catch(e => {
+        console.error(e)
       })
   }
 }
@@ -116,8 +116,8 @@ class DriveAPI extends Credentials {
       .then(value => {
         return value.data.id
       })
-      .catch((error) => {
-        console.error(error)
+      .catch(e => {
+        console.error(e)
       })
   }
 
@@ -139,8 +139,8 @@ class DriveAPI extends Credentials {
         }
         return folderInformation[0].id
       })
-      .catch((error) => {
-        console.error(error)
+      .catch(e => {
+        console.error(e)
       })
   }
 
@@ -168,8 +168,8 @@ class DriveAPI extends Credentials {
             role: 'writer'
           }
         }
-      ).catch((error) => {
-        console.error(error)
+      ).catch(e => {
+        console.error(e)
       })
   }
 }
@@ -216,8 +216,8 @@ class GmailAPI extends Credentials {
           resource: { raw: base64data }
         }
       )
-      .catch((error) => {
-        console.error(error)
+      .catch(e => {
+        console.error(e)
       })
   }
 }

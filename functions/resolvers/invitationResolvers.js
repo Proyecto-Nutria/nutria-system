@@ -44,7 +44,7 @@ const invitationResolvers = {
 
           return 'Inserted Into Database'
         })
-        .catch(_ => { throw forbiddenError() })
+        .catch(e => { console.error(e); throw forbiddenError() })
     }
   }
 }
