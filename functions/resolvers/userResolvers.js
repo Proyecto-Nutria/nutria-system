@@ -70,19 +70,6 @@ const userResolvers = {
             })
         })
     }
-    // TODO: Query interviewee instead of users
-    /*
-    getAllInterviewees: () => {
-      return SingletonAdmin
-        .GetInstance()
-        .database()
-        .ref(USER_REF)
-        .orderByChild(USER_ROLE_ATTR)
-        .equalTo(INTERVIEWEE_VAL)
-        .once(FIREBASE_VAL)
-        .then(snap => snap.val())
-        .then(val => Object.keys(val).map(key => val[key]))
-    } */
   }
 }
 

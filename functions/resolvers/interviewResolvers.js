@@ -71,10 +71,13 @@ const interviewResolvers = {
         .startAt(`${context.uid}_${Date.now()}`)
         .once(FIREBASE_VAL)
         .then(snap => snap.val())
-        .then(val => Object.keys(val).map(key => {
-          val[key].uid = key
-          return val[key]
-        }))
+        .then(val => {
+          if (!val) { return null }
+          return Object.keys(val).map(key => {
+            val[key].uid = key
+            return val[key]
+          })
+        })
     }
   },
   Mutation: {
