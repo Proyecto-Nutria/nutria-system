@@ -76,11 +76,11 @@ input IntervalInput {
 }
 
 input PoolInput {
-  companies: [Company]!
+  companies: [Company]
   availability: [IntervalInput]!
   language: [ProgrammingLanguage]!
   pending: Int!
-  role: CompanyRole
+  role: CompanyRole!
   type: TypeOfInterview!
   # TODO: Erase the range when an interview is scheduled to avoid problems
 }
